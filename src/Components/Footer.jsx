@@ -1,8 +1,8 @@
-import React from 'react'
+// import React from 'react'
 
 function Footer() {
   return (
-    <div>Footer</div>
+    <div>Mental Health@2024 All Rights Reserved</div>
   )
 }
 
