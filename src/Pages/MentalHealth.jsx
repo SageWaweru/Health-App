@@ -75,7 +75,6 @@ const MentalHealth = () => {
     setJournalFiles([]);
   };
   
-
   const handleFileChange = async (e) => {
     const files = Array.from(e.target.files);
     const base64Files = await Promise.all(files.map(convertToBase64));
