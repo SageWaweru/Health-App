@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import './App.css'
-import Footer from './Components/Footer';
+import MentalHealth from './Pages/MentalHealth';
 import Dashboard from './Pages/Dashboard';
 import Goals from './Pages/Goals';
 import { GoalsProvider } from './Context/GoalsProvider';
@@ -12,6 +12,7 @@ function App() {
   
      <div className='flex flex-wrap flex-col'>
        <GoalsProvider>
+       <MentalHealth/>
         <Reminder/>
          <Router>
           <nav>
@@ -27,7 +28,6 @@ function App() {
              </Router>
        </GoalsProvider>
      </div>
-
   )
 }
 
