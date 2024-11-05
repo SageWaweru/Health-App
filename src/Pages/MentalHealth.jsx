@@ -7,7 +7,7 @@ Counselor Connection: Page to request a session or find a counselor.
 }
 
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 const moods = ["Happy 😊", "Sad 😢", "Anxious 😟", "Calm 😌"];
 
@@ -21,6 +21,8 @@ const MentalHealth = () => {
   const [selectedEntry, setSelectedEntry] = useState(null);
   const [editEntryText, setEditEntryText] = useState("");
   const [additionalFiles, setAdditionalFiles] = useState([]);
+ 
+  const fileInputRef = useRef(null);
 
   
   useEffect(() => {
@@ -54,7 +56,7 @@ const MentalHealth = () => {
   const handleJournalSubmit = async (e) => {
     e.preventDefault();
 
-    
+    try{
     const base64Files = await Promise.all(journalFiles.map(convertToBase64));
     
     
@@ -72,29 +74,36 @@ const MentalHealth = () => {
 
     
     setJournalEntry("");
-    setJournalFiles([]);
+    setJournalFiles("");
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ""; 
+    }
+  } catch (error){
+    console.error("error in saving the entry:", error);
+  }
   };
   
   const handleFileChange = async (e) => {
     const files = Array.from(e.target.files);
     const base64Files = await Promise.all(files.map(convertToBase64));
   
-    // Determine if files are being added to a new entry or an existing selected entry
+   
     if (selectedEntry) {
-      // Update files in the selected entry
+      
       const updatedFiles = [...(selectedEntry.files || []), ...base64Files];
       const updatedSelectedEntry = { ...selectedEntry, files: updatedFiles };
       setSelectedEntry(updatedSelectedEntry);
   
-      // Update the journal history with this modified entry
+      
       const updatedJournalHistory = journalHistory.map((entry) =>
         entry.date === selectedEntry.date ? updatedSelectedEntry : entry
       );
       setJournalHistory(updatedJournalHistory);
       localStorage.setItem("journalHistory", JSON.stringify(updatedJournalHistory));
     } else {
-      // If adding files for a new entry
+      
       setJournalFiles([...journalFiles, ...files]);
+      // setJournalFiles(files);
     }
   };
   
@@ -177,10 +186,17 @@ const MentalHealth = () => {
   };
 
   return (
-    <div style={{ width: "80vw", maxWidth: "80vw" }} className="">
-      <div className="font-sans">
-        <h2 className="text-3xl text-center mb-10 font-semibold border-b-2 border-b-green-500">
-          MOOD TRACKER
+    <div style={{ width: "80vw", maxWidth: "80vw" }} className="mx auto mt-10">
+      <h2 className="text-3xl text-center mb-10 font-semibold border-b-2 border-b-cyan-800">
+        MOOD AND JOURNAL TRACKER
+      </h2>
+
+      {/* Main Container */}
+  <div className="flex gap-10">
+
+      <div className="font-sans flex-1 p-4 bg-white shadow-lg rounded-lg">
+        <h2 className="text-xl text-left mb-6 font-semibold ">
+          My Mood Tracker
         </h2>
 
         {/* Mood Logging Form */}
@@ -192,7 +208,7 @@ const MentalHealth = () => {
             <select
               value={mood}
               onChange={(e) => setMood(e.target.value)}
-              className="w-full p-2 border rounded-lg bg-green-300 hover:bg-green-500"
+              className="w-full p-2 border rounded-lg bg-cyan-500 hover:bg-cyan-800 hover:text-orange-50"
               required
             >
               <option value="">Select Mood</option>
@@ -218,7 +234,7 @@ const MentalHealth = () => {
 
           <button
             type="submit"
-            className="w-full py-2 bg-green-500 text-white font-bold rounded-lg hover:bg-green-600 transition-colors"
+            className="w-full py-2 bg-cyan-800 text-orange-50 font-bold rounded-lg hover:bg-cyan-700 hover:shadow-lg transition-colors"
           >
             Log Mood
           </button>
@@ -252,9 +268,11 @@ const MentalHealth = () => {
             </li>
           ))}
         </ul>
+        </div>
 
         {/* Journal Entry Form */}
-        <h3 className="text-xl font-semibold mt-6 mb-3 text-left">
+        <div className="flex-1 p-4 bg-white shadow-lg rounded-lg">
+        <h3 className="text-xl  font-semibold  mb-6 text-left">
           My Daily Journal
         </h3>
         <form onSubmit={handleJournalSubmit} className="space-y-4">
@@ -271,12 +289,13 @@ const MentalHealth = () => {
             accept="image/*,video/*"
             onChange={handleFileChange}
             multiple 
-            key={journalFiles ? journalFiles.name : "default"} 
-            className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:bg-green-500 file:text-white hover:file:bg-green-600"
+            ref={fileInputRef}
+            // key={journalFiles ? journalFiles.name : "default"} 
+            className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:bg-cyan-800 file:text-orange-50 hover:file:bg-cyan-600"
           />
           <button
             type="submit"
-            className="w-full py-2 bg-green-500 font-bold text-white rounded-lg hover:bg-green-600 transition-colors"
+            className="w-full py-2 bg-cyan-800 font-bold text-orange-50 rounded-lg hover:bg-cyan-700 transition-colors"
           >
             Save Journal Entry
           </button>
@@ -307,7 +326,7 @@ const MentalHealth = () => {
                 
                 <button
                   onClick={() => handleDeleteEntry(index)}
-                  className="text-red-500 hover:text-red-900 ml-4 self-start p-1 hover:border-green-800"
+                  className="text-red-500 hover:text-red-900 ml-4 self-start p-1 hover:border-cyan-800"
                 >
                   Delete
                 </button>
@@ -318,7 +337,7 @@ const MentalHealth = () => {
           <div className="p-4 bg-white border rounded-lg shadow-sm">
             <button
               onClick={handleBackClick}
-              className="text-green-500 hover:text-green-700 mb-4"
+              className="text-cyan-500 hover:text-cyan-700 mb-4"
             >
               &larr; Back to Journal History
             </button>
@@ -346,26 +365,26 @@ const MentalHealth = () => {
                   <img
                     src={file}
                     alt={`Journal Media ${idx}`}
-                    className="rounded-lg border-2 border-green-400 w-full h-80 object-cover aspect-square"
+                    className="rounded-lg border-2 border-cyan-400 w-full h-80 object-cover aspect-square"
                   />
                 ) : (
                   <video
                     src={file}
                     controls
-                    className="rounded-lg border-2 border-green-400 w-full h-80 object-cover aspect-square"
+                    className="rounded-lg border-2 border-cyan-400 w-full h-80 object-cover aspect-square"
                   />
                 )}
-                <button onClick={() => handleRemoveFile(idx)} className="absolute top-1 right-1 bg-red-500 text-white text-xs px-2 py-1 rounded-full hover:bg-red-700">Remove</button>
+                <button onClick={() => handleRemoveFile(idx)} className="absolute top-1 right-1 bg-red-500 text-orange-50 text-xs px-2 py-1 rounded-full hover:bg-red-700">Remove</button>
               </div>
             ))}
             </div>
-            <input type="file" accept="image/*,video/*" onChange={handleFileChange} multiple className="block w-full text-sm mt-4" />
-            <button onClick={saveAdditionalFiles} className="mt-2 bg-green-500 text-white px-4 py-2 rounded-lg">Save Additional Files</button>
+            <input type="file" accept="image/*,video/*" onChange={handleFileChange} multiple  key={journalFiles.length} className="block w-full text-sm mt-4" />
+            <button onClick={saveAdditionalFiles} className="mt-2 bg-cyan-500 hover:bg-cyan-900 text-orange-50 px-4 py-2 rounded-lg">Save Additional Files</button>
           </div>
         )}
       </div>
     </div> 
-     
+    </div>
   );
 };
 
