@@ -10,7 +10,7 @@ function Dashboard() {
   
   return (
     <div className='flex flex-wrap flex-col '>
-      <div className="bg-custom-image bg-cover bg-center w-custom-width h-96 flex flex-wrap rounded-md flex flex-col justify-center mb-10">
+      <div className="bg-custom-image bg-cover bg-center w-custom-width h-96 flex flex-wrap rounded-md  flex-col justify-center mb-10">
         <h1 className=' text-3xl'>Set Your Goals <br /> and Start The Journey To being Your Best Self!</h1>
         <span className='bg-orange-600 h-10 text-center flex flex-row justify-center align-center w-40 self-center m-6 rounded-md'>
       <Link to="/goals" className='text-center text-2xl text-amber-50'>Set Goals</Link>
