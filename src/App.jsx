@@ -22,7 +22,6 @@ function App() {
           <Routes>
             <Route path="/" element={<Dashboard/>} />
            <Route path="/goals" element={<Goals />} />
-            <Route path="/footer" element={<Footer/>} />
             {/* You can add more routes here as needed this was hust an example of how you can route */}
           </Routes>
              </Router>

@@ -177,9 +177,9 @@ const MentalHealth = () => {
   };
 
   return (
-    <div style={{ width: "80vw", maxWidth: "80vw" }} className="">
+    <div style={{ width: "80vw", maxWidth: "80vw", }} className="w-full flex flex-col self-center">
       <div className="font-sans">
-        <h2 className="text-3xl text-center mb-10 font-semibold border-b-2 border-b-green-500">
+        <h2 className="text-3xl text-center mb-10 font-semibold border-b-2 border-b-cyan-800">
           MOOD TRACKER
         </h2>
 
@@ -192,7 +192,7 @@ const MentalHealth = () => {
             <select
               value={mood}
               onChange={(e) => setMood(e.target.value)}
-              className="w-full p-2 border rounded-lg bg-green-300 hover:bg-green-500"
+              className="w-full p-2 border rounded-lg bg-cyan-500 hover:bg-cyan-800 hover:text-orange-50"
               required
             >
               <option value="">Select Mood</option>
@@ -218,7 +218,7 @@ const MentalHealth = () => {
 
           <button
             type="submit"
-            className="w-full py-2 bg-green-500 text-white font-bold rounded-lg hover:bg-green-600 transition-colors"
+            className="w-full py-2 bg-cyan-800 text-orange-50 font-bold rounded-lg hover:bg-cyan-700 hover:shadow-lg  transition-colors"
           >
             Log Mood
           </button>
@@ -272,11 +272,11 @@ const MentalHealth = () => {
             onChange={handleFileChange}
             multiple 
             key={journalFiles ? journalFiles.name : "default"} 
-            className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:bg-green-500 file:text-white hover:file:bg-green-600"
+            className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:bg-cyan-800 file:text-orange-50 hover:file:bg-cyan-600"
           />
           <button
             type="submit"
-            className="w-full py-2 bg-green-500 font-bold text-white rounded-lg hover:bg-green-600 transition-colors"
+            className="w-full py-2 bg-cyan-800 font-bold text-orange-50 rounded-lg hover:bg-cyan-700 hover:shadow-lg  transition-colors"
           >
             Save Journal Entry
           </button>
@@ -307,7 +307,7 @@ const MentalHealth = () => {
                 
                 <button
                   onClick={() => handleDeleteEntry(index)}
-                  className="text-red-500 hover:text-red-900 ml-4 self-start p-1 hover:border-green-800"
+                  className="text-red-500 hover:text-red-900 ml-4 self-start p-1 hover:border-cyan-800"
                 >
                   Delete
                 </button>
@@ -318,7 +318,7 @@ const MentalHealth = () => {
           <div className="p-4 bg-white border rounded-lg shadow-sm">
             <button
               onClick={handleBackClick}
-              className="text-green-500 hover:text-green-700 mb-4"
+              className="text-cyan-800 hover:text-cyan-700 mb-4"
             >
               &larr; Back to Journal History
             </button>
@@ -346,21 +346,21 @@ const MentalHealth = () => {
                   <img
                     src={file}
                     alt={`Journal Media ${idx}`}
-                    className="rounded-lg border-2 border-green-400 w-full h-80 object-cover aspect-square"
+                    className="rounded-lg border-2 border-cyan-400 w-full h-80 object-cover aspect-square"
                   />
                 ) : (
                   <video
                     src={file}
                     controls
-                    className="rounded-lg border-2 border-green-400 w-full h-80 object-cover aspect-square"
+                    className="rounded-lg border-2 border-cyan-400 w-full h-80 object-cover aspect-square"
                   />
                 )}
-                <button onClick={() => handleRemoveFile(idx)} className="absolute top-1 right-1 bg-red-500 text-white text-xs px-2 py-1 rounded-full hover:bg-red-700">Remove</button>
+                <button onClick={() => handleRemoveFile(idx)} className="absolute top-1 right-1 bg-red-500 text-orange-50 text-xs px-2 py-1 rounded-full hover:bg-red-700">Remove</button>
               </div>
             ))}
             </div>
             <input type="file" accept="image/*,video/*" onChange={handleFileChange} multiple className="block w-full text-sm mt-4" />
-            <button onClick={saveAdditionalFiles} className="mt-2 bg-green-500 text-white px-4 py-2 rounded-lg">Save Additional Files</button>
+            <button onClick={saveAdditionalFiles} className="mt-2 bg-cyan-800 text-orange-50 px-4 py-2 rounded-lg">Save Additional Files</button>
           </div>
         )}
       </div>
