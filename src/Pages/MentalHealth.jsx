@@ -214,6 +214,7 @@ const showAllMoodEntries = () => {
 };
   
   return (
+
     <div style={{ width: "80vw", maxWidth: "80vw" }} className="mx auto mt-10">
       <h2 className="text-3xl text-center mb-10 font-semibold border-b-2 border-b-cyan-800">
         MOOD AND JOURNAL TRACKER
@@ -225,6 +226,7 @@ const showAllMoodEntries = () => {
       <div className="font-sans flex-1 p-4 bg-white shadow-lg rounded-lg">
         <h2 className="text-xl text-left mb-6 font-semibold ">
           My Mood Tracker
+
         </h2>
 
         {/* Mood Logging Form */}
@@ -262,7 +264,9 @@ const showAllMoodEntries = () => {
 
           <button
             type="submit"
+
             className="w-full py-2 bg-cyan-800 text-orange-50 font-bold rounded-lg hover:bg-cyan-700 hover:shadow-lg transition-colors"
+
           >
             Log Mood
           </button>
@@ -333,13 +337,17 @@ const showAllMoodEntries = () => {
             accept="image/*,video/*"
             onChange={(e) => setJournalFiles(Array.from(e.target.files))}
             multiple 
+
             ref={fileInputRef}
             // key={journalFiles ? journalFiles.name : "default"} 
+
             className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:bg-cyan-800 file:text-orange-50 hover:file:bg-cyan-600"
           />
           <button
             type="submit"
+
             className="w-full py-2 bg-cyan-800 font-bold text-orange-50 rounded-lg hover:bg-cyan-700 transition-colors"
+
           >
             Save Journal Entry
           </button>
@@ -399,7 +407,9 @@ const showAllMoodEntries = () => {
           <div className="p-4 bg-white border rounded-lg shadow-sm">
             <button
               onClick={handleBackClick}
+
               className="text-cyan-500 hover:text-cyan-700 mb-4"
+
             >
               &larr; Back to Journal History
             </button>
@@ -440,8 +450,10 @@ const showAllMoodEntries = () => {
               </div>
             ))}
             </div>
+
             <input type="file" accept="image/*,video/*" onChange={handleFileChange} multiple  key={journalFiles.length} className="block w-full text-sm mt-4" />
             <button onClick={saveAdditionalFiles} className="mt-2 bg-cyan-500 hover:bg-cyan-900 text-orange-50 px-4 py-2 rounded-lg">Save Additional Files</button>
+
           </div>
         )}
 

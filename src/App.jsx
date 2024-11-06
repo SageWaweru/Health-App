@@ -1,6 +1,7 @@
+// import Auth from './Pages/Auth'
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import './App.css'
-import MentalHealth from './Pages/MentalHealth';
+// import MentalHealth from './Pages/MentalHealth';
 import Dashboard from './Pages/Dashboard';
 import Goals from './Pages/Goals';
 import { GoalsProvider } from './Context/GoalsProvider';
@@ -8,12 +9,13 @@ import Reminder from './Components/Reminder';
 import Footer from './Components/Footer';
 import SupportCommunity from './Pages/SupportCommunity';
 
-function App() {
 
+function App() {
   return (
   
      <div className='flex flex-wrap flex-col'>
        <GoalsProvider>
+        {/* <Auth/> */}
        {/* <MentalHealth/> */}
         <Reminder/>
          <Router>
