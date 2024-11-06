@@ -21,7 +21,10 @@ const MentalHealth = () => {
   const [selectedEntry, setSelectedEntry] = useState(null);
   const [editEntryText, setEditEntryText] = useState("");
   const [additionalFiles, setAdditionalFiles] = useState([]);
- 
+  const [selectedJournalDay, setSelectedJournalDay] = useState("");
+const [selectedMoodDay, setSelectedMoodDay] = useState("");
+
+  // const [selectedDate, setSelectedDate] = useState("");
   const fileInputRef = useRef(null);
 
   
@@ -184,7 +187,32 @@ const MentalHealth = () => {
       setSelectedEntry({ ...selectedEntry, entry: editEntryText });
     }
   };
+  const handleJournalDayFilterChange = (e) => {
+    setSelectedJournalDay(e.target.value);
+  };
+  const handleMoodDayFilterChange = (e) => {
+    setSelectedMoodDay(e.target.value);
+  };
 
+  const filteredJournalHistory = journalHistory.filter((entry) => {
+    if (!selectedJournalDay) return true; // If no date is selected, show all entries
+    const entryDate = new Date(entry.date).toISOString().split("T")[0]; // Format to "YYYY-MM-DD"
+    return entryDate === selectedJournalDay;
+  });
+
+  const showAllJournalEntries = () => {
+    setSelectedJournalDay("");
+};
+const filteredMoodHistory = moodHistory.filter((entry) => {
+  if (!selectedMoodDay) return true; // If no date is selected, show all entries
+  const entryDate = new Date(entry.date).toISOString().split("T")[0]; // Format to "YYYY-MM-DD"
+  return entryDate === selectedMoodDay;
+});
+
+const showAllMoodEntries = () => {
+  setSelectedMoodDay("");
+};
+  
   return (
     <div style={{ width: "80vw", maxWidth: "80vw" }} className="mx auto mt-10">
       <h2 className="text-3xl text-center mb-10 font-semibold border-b-2 border-b-cyan-800">
@@ -239,13 +267,29 @@ const MentalHealth = () => {
             Log Mood
           </button>
         </form>
+        <div className="day-filter mt-5 mb-4">
+    <label htmlFor="dayFilter" >Filter by Day:</label>
+    <input
+        type="date"
+        id="dayFilter"
+        value={selectedMoodDay}
+        onChange={handleMoodDayFilterChange}
+        className="p-2 border rounded-lg ml-7"
+    />
+    <button
+        onClick={showAllMoodEntries}
+        className="mt-2  hover:bg-cyan-500 text-black hover:text-white font-bold text-sm ml-11 px-4 py-2 rounded-lg"
+    >
+        All 
+    </button>
+</div>
 
         {/* Mood History */}
         <h3 className="text-xl font-semibold mt-6 mb-3 text-left">
           Mood History
         </h3>
         <ul className="space-y-4">
-          {moodHistory.map((entry, index) => (
+          {filteredMoodHistory.map((entry, index) => (
             <li
               key={index}
               className="p-4 bg-white border rounded-lg shadow-sm"
@@ -287,7 +331,7 @@ const MentalHealth = () => {
           <input
             type="file"
             accept="image/*,video/*"
-            onChange={handleFileChange}
+            onChange={(e) => setJournalFiles(Array.from(e.target.files))}
             multiple 
             ref={fileInputRef}
             // key={journalFiles ? journalFiles.name : "default"} 
@@ -300,12 +344,30 @@ const MentalHealth = () => {
             Save Journal Entry
           </button>
         </form>
+        {/* Date Filter */}
+      <div className="date-filter mt-5">
+        <label htmlFor="dateFilter">Filter by Date:</label>
+        <input
+          type="date"
+          id="dateFilter"
+          value={selectedJournalDay}
+          onChange={handleJournalDayFilterChange}
+          className="p-2 border rounded-lg ml-7"
+        />
+        <button
+        onClick={showAllJournalEntries}
+        className="mt-2  hover:bg-cyan-500 text-black hover:text-white font-bold text-sm ml-11 px-4 py-2 rounded-lg"
+    >
+        All 
+    </button>
+      </div>
+
 
         {/* Journal History */}
          <h3 className="text-xl font-semibold mt-6 mb-3">Journal History</h3>
         {!selectedEntry ? (
           <ul className="space-y-4">
-            {journalHistory.map((entry, index) => (
+            {filteredJournalHistory.map((entry, index) => (
               <li
                 key={index}
                 className="p-4 bg-white border rounded-lg shadow-sm flex items-start justify-between hover:bg-gray-200  "
@@ -382,6 +444,7 @@ const MentalHealth = () => {
             <button onClick={saveAdditionalFiles} className="mt-2 bg-cyan-500 hover:bg-cyan-900 text-orange-50 px-4 py-2 rounded-lg">Save Additional Files</button>
           </div>
         )}
+
       </div>
     </div> 
     </div>
