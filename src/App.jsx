@@ -1,4 +1,4 @@
-// import Auth from './Pages/Auth'
+import Auth from './Pages/Auth'
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import './App.css'
 import MentalHealth from './Pages/MentalHealth';
@@ -14,20 +14,21 @@ function App() {
   
      <div className='flex flex-wrap flex-col'>
        <GoalsProvider>
-        {/* <Auth/> */}
-       {/* <MentalHealth/> */}
         <Reminder/>
          <Router>
           <nav className=' space-x-4'>
           <Link to="/">Dashboard</Link>
             <Link to="/Community">Support & Community</Link>
             <Link to="/MentalHealth">Mental Health</Link>
+            <Link to="/Login">Login</Link>
+
           </nav>
           <Routes>
             <Route path="/" element={<Dashboard/>} />
            <Route path="/goals" element={<Goals />} />
             <Route path="/Community" element={<SupportCommunity/>}/>
             <Route path="/MentalHealth" element={<MentalHealth/>} />
+            <Route path="/Login" element={<Auth/>} />
             {/* You can add more routes here as needed this was hust an example of how you can route */}
           </Routes>
              </Router>
