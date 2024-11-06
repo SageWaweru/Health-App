@@ -13,6 +13,7 @@ function App() {
   
      <div className='flex flex-wrap flex-col'>
        <GoalsProvider>
+        <Auth/>
        <MentalHealth/>
         <Reminder/>
          <Router>
