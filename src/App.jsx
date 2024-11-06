@@ -35,6 +35,7 @@ function App() {
        </GoalsProvider>
      </div>
   )
+
 }
 
-export default App
+export default App;
