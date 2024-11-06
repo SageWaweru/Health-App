@@ -1,3 +1,4 @@
+
 import React from 'react'
 const Profile = () => {
     // State for basic profile information
@@ -10,3 +11,6 @@ const Profile = () => {
 }
 
 export default Profile
+
+
+

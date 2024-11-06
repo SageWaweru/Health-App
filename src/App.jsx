@@ -1,3 +1,4 @@
+
 import Auth from './Pages/Auth'
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import './App.css'
@@ -36,6 +37,27 @@ function App() {
        </GoalsProvider>
      </div>
   )
-}
 
-export default App
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import "./App.css";
+import Footer from "./Components/Footer";
+
+function App() {
+  return (
+    <>
+      <Router>
+        <nav>
+          <Link to="/">Footer</Link>
+        </nav>
+        <Routes>
+          <Route path="/" element={<Footer />} />
+          {/* You can add more routes here as needed this was hust an example of how you can route */}
+        </Routes>
+      </Router>
+      <Footer />
+    </>
+  );
+
+}
+ }
+ export default App
