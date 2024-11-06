@@ -7,7 +7,7 @@ Counselor Connection: Page to request a session or find a counselor.
 }
 
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 const moods = ["Happy 😊", "Sad 😢", "Anxious 😟", "Calm 😌"];
 
@@ -21,6 +21,11 @@ const MentalHealth = () => {
   const [selectedEntry, setSelectedEntry] = useState(null);
   const [editEntryText, setEditEntryText] = useState("");
   const [additionalFiles, setAdditionalFiles] = useState([]);
+  const [selectedJournalDay, setSelectedJournalDay] = useState("");
+const [selectedMoodDay, setSelectedMoodDay] = useState("");
+
+  // const [selectedDate, setSelectedDate] = useState("");
+  const fileInputRef = useRef(null);
 
   
   useEffect(() => {
@@ -54,7 +59,7 @@ const MentalHealth = () => {
   const handleJournalSubmit = async (e) => {
     e.preventDefault();
 
-    
+    try{
     const base64Files = await Promise.all(journalFiles.map(convertToBase64));
     
     
@@ -72,29 +77,36 @@ const MentalHealth = () => {
 
     
     setJournalEntry("");
-    setJournalFiles([]);
+    setJournalFiles("");
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ""; 
+    }
+  } catch (error){
+    console.error("error in saving the entry:", error);
+  }
   };
   
   const handleFileChange = async (e) => {
     const files = Array.from(e.target.files);
     const base64Files = await Promise.all(files.map(convertToBase64));
   
-    // Determine if files are being added to a new entry or an existing selected entry
+   
     if (selectedEntry) {
-      // Update files in the selected entry
+      
       const updatedFiles = [...(selectedEntry.files || []), ...base64Files];
       const updatedSelectedEntry = { ...selectedEntry, files: updatedFiles };
       setSelectedEntry(updatedSelectedEntry);
   
-      // Update the journal history with this modified entry
+      
       const updatedJournalHistory = journalHistory.map((entry) =>
         entry.date === selectedEntry.date ? updatedSelectedEntry : entry
       );
       setJournalHistory(updatedJournalHistory);
       localStorage.setItem("journalHistory", JSON.stringify(updatedJournalHistory));
     } else {
-      // If adding files for a new entry
+      
       setJournalFiles([...journalFiles, ...files]);
+      // setJournalFiles(files);
     }
   };
   
@@ -175,12 +187,46 @@ const MentalHealth = () => {
       setSelectedEntry({ ...selectedEntry, entry: editEntryText });
     }
   };
+  const handleJournalDayFilterChange = (e) => {
+    setSelectedJournalDay(e.target.value);
+  };
+  const handleMoodDayFilterChange = (e) => {
+    setSelectedMoodDay(e.target.value);
+  };
 
+  const filteredJournalHistory = journalHistory.filter((entry) => {
+    if (!selectedJournalDay) return true; // If no date is selected, show all entries
+    const entryDate = new Date(entry.date).toISOString().split("T")[0]; // Format to "YYYY-MM-DD"
+    return entryDate === selectedJournalDay;
+  });
+
+  const showAllJournalEntries = () => {
+    setSelectedJournalDay("");
+};
+const filteredMoodHistory = moodHistory.filter((entry) => {
+  if (!selectedMoodDay) return true; // If no date is selected, show all entries
+  const entryDate = new Date(entry.date).toISOString().split("T")[0]; // Format to "YYYY-MM-DD"
+  return entryDate === selectedMoodDay;
+});
+
+const showAllMoodEntries = () => {
+  setSelectedMoodDay("");
+};
+  
   return (
-    <div style={{ width: "80vw", maxWidth: "80vw", }} className="w-full flex flex-col self-center">
-      <div className="font-sans">
-        <h2 className="text-3xl text-center mb-10 font-semibold border-b-2 border-b-cyan-800">
-          MOOD TRACKER
+
+    <div style={{ width: "80vw", maxWidth: "80vw" }} className="mx auto mt-10">
+      <h2 className="text-3xl text-center mb-10 font-semibold border-b-2 border-b-cyan-800">
+        MOOD AND JOURNAL TRACKER
+      </h2>
+
+      {/* Main Container */}
+  <div className="flex gap-10">
+
+      <div className="font-sans flex-1 p-4 bg-white shadow-lg rounded-lg">
+        <h2 className="text-xl text-left mb-6 font-semibold ">
+          My Mood Tracker
+
         </h2>
 
         {/* Mood Logging Form */}
@@ -218,18 +264,36 @@ const MentalHealth = () => {
 
           <button
             type="submit"
-            className="w-full py-2 bg-cyan-800 text-orange-50 font-bold rounded-lg hover:bg-cyan-700 hover:shadow-lg  transition-colors"
+
+            className="w-full py-2 bg-cyan-800 text-orange-50 font-bold rounded-lg hover:bg-cyan-700 hover:shadow-lg transition-colors"
+
           >
             Log Mood
           </button>
         </form>
+        <div className="day-filter mt-5 mb-4">
+    <label htmlFor="dayFilter" >Filter by Day:</label>
+    <input
+        type="date"
+        id="dayFilter"
+        value={selectedMoodDay}
+        onChange={handleMoodDayFilterChange}
+        className="p-2 border rounded-lg ml-7"
+    />
+    <button
+        onClick={showAllMoodEntries}
+        className="mt-2  hover:bg-cyan-500 text-black hover:text-white font-bold text-sm ml-11 px-4 py-2 rounded-lg"
+    >
+        All 
+    </button>
+</div>
 
         {/* Mood History */}
         <h3 className="text-xl font-semibold mt-6 mb-3 text-left">
           Mood History
         </h3>
         <ul className="space-y-4">
-          {moodHistory.map((entry, index) => (
+          {filteredMoodHistory.map((entry, index) => (
             <li
               key={index}
               className="p-4 bg-white border rounded-lg shadow-sm"
@@ -252,9 +316,11 @@ const MentalHealth = () => {
             </li>
           ))}
         </ul>
+        </div>
 
         {/* Journal Entry Form */}
-        <h3 className="text-xl font-semibold mt-6 mb-3 text-left">
+        <div className="flex-1 p-4 bg-white shadow-lg rounded-lg">
+        <h3 className="text-xl  font-semibold  mb-6 text-left">
           My Daily Journal
         </h3>
         <form onSubmit={handleJournalSubmit} className="space-y-4">
@@ -269,24 +335,47 @@ const MentalHealth = () => {
           <input
             type="file"
             accept="image/*,video/*"
-            onChange={handleFileChange}
+            onChange={(e) => setJournalFiles(Array.from(e.target.files))}
             multiple 
-            key={journalFiles ? journalFiles.name : "default"} 
+
+            ref={fileInputRef}
+            // key={journalFiles ? journalFiles.name : "default"} 
+
             className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:bg-cyan-800 file:text-orange-50 hover:file:bg-cyan-600"
           />
           <button
             type="submit"
-            className="w-full py-2 bg-cyan-800 font-bold text-orange-50 rounded-lg hover:bg-cyan-700 hover:shadow-lg  transition-colors"
+
+            className="w-full py-2 bg-cyan-800 font-bold text-orange-50 rounded-lg hover:bg-cyan-700 transition-colors"
+
           >
             Save Journal Entry
           </button>
         </form>
+        {/* Date Filter */}
+      <div className="date-filter mt-5">
+        <label htmlFor="dateFilter">Filter by Date:</label>
+        <input
+          type="date"
+          id="dateFilter"
+          value={selectedJournalDay}
+          onChange={handleJournalDayFilterChange}
+          className="p-2 border rounded-lg ml-7"
+        />
+        <button
+        onClick={showAllJournalEntries}
+        className="mt-2  hover:bg-cyan-500 text-black hover:text-white font-bold text-sm ml-11 px-4 py-2 rounded-lg"
+    >
+        All 
+    </button>
+      </div>
+
 
         {/* Journal History */}
          <h3 className="text-xl font-semibold mt-6 mb-3">Journal History</h3>
         {!selectedEntry ? (
           <ul className="space-y-4">
-            {journalHistory.map((entry, index) => (
+            {filteredJournalHistory.map((entry, index) => (
               <li
                 key={index}
                 className="p-4 bg-white border rounded-lg shadow-sm flex items-start justify-between hover:bg-gray-200  "
@@ -318,7 +407,9 @@ const MentalHealth = () => {
           <div className="p-4 bg-white border rounded-lg shadow-sm">
             <button
               onClick={handleBackClick}
-              className="text-cyan-800 hover:text-cyan-700 mb-4"
+
+              className="text-cyan-500 hover:text-cyan-700 mb-4"
+
             >
               &larr; Back to Journal History
             </button>
@@ -359,13 +450,16 @@ const MentalHealth = () => {
               </div>
             ))}
             </div>
-            <input type="file" accept="image/*,video/*" onChange={handleFileChange} multiple className="block w-full text-sm mt-4" />
-            <button onClick={saveAdditionalFiles} className="mt-2 bg-cyan-800 text-orange-50 px-4 py-2 rounded-lg">Save Additional Files</button>
+
+            <input type="file" accept="image/*,video/*" onChange={handleFileChange} multiple  key={journalFiles.length} className="block w-full text-sm mt-4" />
+            <button onClick={saveAdditionalFiles} className="mt-2 bg-cyan-500 hover:bg-cyan-900 text-orange-50 px-4 py-2 rounded-lg">Save Additional Files</button>
+
           </div>
         )}
+
       </div>
     </div> 
-     
+    </div>
   );
 };
 
