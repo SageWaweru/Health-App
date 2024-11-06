@@ -4,7 +4,7 @@ function Auth() {
   return (
     <div>
       Auth
-      <div className='content-center p-10 bg-gray-200 m-10 rounded-lg w-[500px]'>
+      <div className='content-center p-10 bg-emerald-200 m-10 rounded-lg w-[500px]'>
         <form action="">
             <h1 className='align-center font-bold'>Registration form</h1>
             <input type="text" placeholder='Full Name' className='w-full my-5 p-1 text-center rounded-xl'/>
@@ -13,7 +13,7 @@ function Auth() {
             <br />
             <input type="password" placeholder='password' className='w-full my-5 p-1 text-center rounded-xl' />
             <br />
-            <button className='bg-green-300 p-1 px-5 w-full my-5'>submit</button>
+            <button className='bg-orange-300 p-1 px-5 w-full my-5'>submit</button>
 
             
         </form>
