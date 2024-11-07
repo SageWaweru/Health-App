@@ -1,5 +1,7 @@
+import { useState } from "react"
+import { signInWithEmailAndPassword,createUserWithEmailAndPassword,signInWithPopup,GoogleAuthProvider,sendEmailVerification } from "firebase/auth"
+import {auth} from '../firebase'
 function Auth() {
-
   return (
     <div>
       <div className='content-center'>
