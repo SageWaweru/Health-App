@@ -181,7 +181,7 @@ const FitnessFeedback = ({ waterIntake, sleepHours, exercises }) => {
       <h2 className="text-lg font-semibold mb-4">Daily Health Insights</h2>
 
       {/* Water Feedback */}
-      <div className="flex items-start gap-3 p-4 bg-blue-50 rounded-lg">
+      <div className="flex items-start gap-3 p-4 bg-cyan-50 rounded-lg">
         {renderIcon(waterFeedback.icon)}
         <div>
           <h3 className="font-medium text-gray-900">
@@ -192,7 +192,7 @@ const FitnessFeedback = ({ waterIntake, sleepHours, exercises }) => {
       </div>
 
       {/* Sleep Feedback */}
-      <div className="flex items-start gap-3 p-4 bg-purple-50 rounded-lg">
+      <div className="flex items-start gap-3 p-4 bg-orange-50 rounded-lg">
         {renderIcon(sleepFeedback.icon)}
         <div>
           <h3 className="font-medium text-gray-900">
@@ -203,7 +203,7 @@ const FitnessFeedback = ({ waterIntake, sleepHours, exercises }) => {
       </div>
 
       {/* Exercise Feedback */}
-      <div className="flex items-start gap-3 p-4 bg-green-50 rounded-lg">
+      <div className="flex items-start gap-3 p-4 bg-emerald-50 rounded-lg">
         {renderIcon(cardioFeedback.icon)}
         <div>
           <h3 className="font-medium text-gray-900">
