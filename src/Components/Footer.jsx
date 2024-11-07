@@ -1,7 +1,7 @@
 
 function Footer() {
   return (
-    <div>Mental Health@2024 All Rights Reserved</div>
+    <div className="mt-6">Mental Health@2024 All Rights Reserved</div>
   )
 }
 

@@ -62,7 +62,7 @@ function GoalForm() {
 
   return (
     <div className="bg-stone-50 w-96 shadow-lg rounded-md">
-      <h2 className="bg-cyan-800 w-96 self-center rounded h-12 text-center text-xl text-orange-50 pt-2">
+      <h2 className="bg-cyan-800 w-96 self-center rounded-t-md font-semibold h-12 text-center text-xl text-orange-50 pt-2">
         Goal Setting & Habit Reminders
       </h2>
       <form onSubmit={handleSubmit} className="flex flex-col flex-wrap text-left p-6">
