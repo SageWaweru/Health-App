@@ -16,6 +16,7 @@ function Auth() {
               <button className='bg-cyan-800 text-orange-50 hover:bg-cyan-700 hover:shadow-lg p-1 px-5 w-full my-5 h-10'>Submit</button>
             </div>
 
+
             
         </form>
       </div>

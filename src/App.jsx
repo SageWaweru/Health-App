@@ -21,17 +21,18 @@ function App() {
             <Link to="/Community">Support & Community</Link>
             <Link to="/MentalHealth">Mental Health</Link>
             <Link to="/Fitness">Fitness</Link>
-            <Link to="/Login">Login</Link>
+            <Link to="/User">Login user</Link>
 
-
+            
           </nav>
           <Routes>
             <Route path="/" element={<Dashboard/>} />
            <Route path="/goals" element={<Goals />} />
             <Route path="/Community" element={<SupportCommunity/>}/>
             <Route path="/MentalHealth" element={<MentalHealth/>} />
+            <Route path="/User" element={<Auth/>} />
             <Route path="/Fitness" element={<Fitness/>} />
-            <Route path="/Login" element={<Auth/>} />
+            
             {/* You can add more routes here as needed this was hust an example of how you can route */}
           </Routes>
              </Router>
