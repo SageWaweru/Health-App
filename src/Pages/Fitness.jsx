@@ -219,9 +219,9 @@ function Fitness() {
       {/* Input cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Water Input section */}
-        <div className="p-6 bg-blue-50 rounded-xl shadow-sm">
+        <div className="p-6 bg-cyan-50 rounded-xl shadow-sm">
           <div className="flex items-center gap-2 mb-4">
-            <Droplets className="text-blue-500" />
+            <Droplets className="text-cyan-500" />
             <h2 className="text-lg font-semibold text-black">Water Intake</h2>
           </div>
           <input
@@ -244,7 +244,7 @@ function Fitness() {
                 <Line
                   type="monotone"
                   dataKey="water"
-                  stroke="#3B82F6"
+                  stroke="#5EA4BF"
                   name="Water (glasses)"
                 />
               </LineChart>
@@ -253,9 +253,9 @@ function Fitness() {
         </div>
 
         {/* Sleep Hours */}
-        <div className="p-6 bg-purple-50 rounded-xl shadow-sm">
+        <div className="p-6 bg-orange-50 rounded-xl shadow-sm">
           <div className="flex items-center gap-2 mb-4">
-            <Moon className="text-purple-500" />
+            <Moon className="text-orange-500" />
             <h2 className="text-lg font-semibold text-black">Sleep Hours</h2>
           </div>
           <input
@@ -278,7 +278,7 @@ function Fitness() {
                 <Line
                   type="monotone"
                   dataKey="sleep"
-                  stroke="#8B5CF6"
+                  stroke="#D88624"
                   name="Sleep (hours)"
                 />
               </LineChart>
@@ -287,9 +287,9 @@ function Fitness() {
         </div>
 
         {/* Exercise Minutes Card */}
-        <div className="p-6 bg-green-50 rounded-xl shadow-sm">
+        <div className="p-6 bg-emerald-50 rounded-xl shadow-sm">
           <div className="flex items-center gap-2 mb-4">
-            <Dumbbell className="text-green-500" />
+            <Dumbbell className="text-emerald-800" />
             <h2 className="text-lg font-semibold">Exercise</h2>
           </div>
 
@@ -407,13 +407,13 @@ function Fitness() {
         </div>
         <div className="flex items-center gap-4 justify-end">
           <button
-            className="w-[100px] bg-blue-500 flex items-center justify-between py-2 px-3 focus:outline-none transform transition-transform duration-200 hover:scale-105"
+            className="w-[100px] bg-cyan-600 flex items-center justify-between py-2 px-3 focus:outline-none transform transition-transform duration-200 hover:scale-105"
             onClick={handleSave}
           >
             <span className="text-white mr-2">Save</span>
             <Save />
           </button>
-          <button className="w-[100px] bg-green-500 flex items-center justify-between py-2 px-3 focus:outline-none transform transition-transform duration-200 hover:scale-105">
+          <button className="w-[100px] bg-emerald-600 flex items-center justify-between py-2 px-3 focus:outline-none transform transition-transform duration-200 hover:scale-105">
             <span className="text-white mr-2">Edit</span>
             <Pencil />
           </button>
@@ -441,19 +441,19 @@ function Fitness() {
               <Line
                 type="monotone"
                 dataKey="water"
-                stroke="#3B82F6"
+                stroke="#5EA4BF"
                 name="Water (glasses)"
               />
               <Line
                 type="monotone"
                 dataKey="sleep"
-                stroke="#8B5CF6"
+                stroke="#D88624"
                 name="Sleep (hours)"
               />
               <Line
                 type="monotone"
                 dataKey="totalExercise"
-                stroke="#10B981"
+                stroke="#3A7A6B"
                 name="Total Exercise (min)"
               />
             </LineChart>
