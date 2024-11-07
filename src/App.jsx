@@ -16,11 +16,12 @@ function App() {
        <GoalsProvider>
         <Reminder/>
          <Router>
-          <nav className=' space-x-4'>
+          <nav className=' space-x-4 shadow-lg pb-3 mb-4'>
           <Link to="/">Dashboard</Link>
             <Link to="/Community">Support & Community</Link>
             <Link to="/MentalHealth">Mental Health</Link>
             <Link to="/Login">Login</Link>
+
 
           </nav>
           <Routes>

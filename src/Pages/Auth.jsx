@@ -1,4 +1,5 @@
 function Auth() {
+
   return (
     <div>
       <div className='content-center'>
