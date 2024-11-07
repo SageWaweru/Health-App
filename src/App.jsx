@@ -8,7 +8,6 @@ import { GoalsProvider } from './Context/GoalsProvider';
 import Reminder from './Components/Reminder';
 import SupportCommunity from './Pages/SupportCommunity';
 
-
 function App() {
   return (
   
