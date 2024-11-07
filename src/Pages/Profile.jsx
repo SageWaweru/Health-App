@@ -1,5 +1,4 @@
-
-import React from 'react'
+import { useState } from "react";
 const Profile = () => {
     // State for basic profile information
     const [name, setName] = useState('');
