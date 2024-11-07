@@ -65,6 +65,7 @@ const SupportCommunity = () => {
   const [isCreatingGroup, setIsCreatingGroup] = useState(false);
   const [groupName, setGroupName] = useState("");
   const [groupDescription, setGroupDescription] = useState("");
+  const [userName, setUserName] = useState("");
 
   const handleCreateGroup = () => {
     setIsCreatingGroup(true);
@@ -77,6 +78,7 @@ const SupportCommunity = () => {
         id: Date.now(),
         name: groupName,
         description: groupDescription,
+        members:[],
       };
       setGroups([...groups, newGroup]);
       setGroupName("");
@@ -85,10 +87,24 @@ const SupportCommunity = () => {
     }
   };
 
-  // const handleNewGroup = (group) => {
-  //   setGroups([...groups, group]);
-  // };
+  const handleJoinGroup = (groupId) => {
+    if (userName.trim() === "") {
+      alert("Please enter your name to join the group.");
+      return;
+    }
 
+    const updatedGroups = groups.map((group) => {
+      if (group.id === groupId) {
+        return {
+          ...group,
+          members: [...group.members, userName], // Add user to members
+        };
+      }
+      return group;
+    });
+    setGroups(updatedGroups);
+    setUserName(""); // Reset user name after joining
+  };
 
   useEffect(() => {
     const savedPosts = JSON.parse(localStorage.getItem("forumPosts")) || [];
@@ -288,9 +304,32 @@ const SupportCommunity = () => {
           >
             <h3 className="text-xl font-semibold">{group.name}</h3>
             <p className="text-gray-600">{group.description}</p>
-            <button className="mt-2 py-1 px-3 bg-cyan-800 text-white rounded-lg hover:bg-cyan-600">
+            <button onClick={()=> handleJoinGroup(group.id)} className="mt-2 py-1 px-3 bg-cyan-800 text-white rounded-lg hover:bg-cyan-600">
               Join Group
             </button>
+             {/* Input for User Name */}
+      <input
+        type="text"
+        placeholder="Your Name"
+        value={userName}
+        onChange={(e) => setUserName(e.target.value)}
+        className="block w-full p-2 my-4 border rounded"
+      />
+             {/* Display Members */}
+             <div className="mt-2">
+              <h4 className="font-semibold">Members:</h4>
+              <ul className="list-none ml-4">
+                {group.members.length > 0 ? (
+                  group.members.map((member, index) => (
+                    <li key={index} className="text-gray-700">
+                      {member}
+                    </li>
+                  ))
+                ) : (
+                  <li className="text-gray-700">No members yet</li>
+                )}
+              </ul>
+            </div>
           </div>
         ))}
       </div>
