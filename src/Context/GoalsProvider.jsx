@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import GoalsContext from "./GoalsContext";
 import PropTypes from "prop-types";
+import { db } from "../firebase-config";
+import { collection, addDoc, getDocs, updateDoc, doc, deleteDoc } from 'firebase/firestore';
 
 const calculateNextReminder = (frequency, unit) => {
   const nextReminder = new Date();
@@ -36,45 +38,64 @@ const calculateNextReminder = (frequency, unit) => {
   return nextReminder.toISOString();
 };
 
-
 export const GoalsProvider = ({ children }) => {
-  const [filter, setFilter] = useState('All');
-  const [goals, setGoals] = useState([
-    {
-      title: "Drink Water",
-      date:"09/03/2024",
-      reminderFrequency: 1,
-      reminderUnit: "days",
-      nextReminder: calculateNextReminder(1, "days"),
-      completed: false,
-      id: Date.now(),
-    },
-  ]);
+  const [filter, setFilter] = useState("All");
+  const [goals, setGoals] = useState([]);
 
-  const addGoal = (goal) => {
+  useEffect(() => {
+    const fetchGoals = async () => {
+      const goalsCollection = collection(db, "goals");
+      const goalsSnapshot = await getDocs(goalsCollection);
+      const goalsList = goalsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setGoals(goalsList);
+    };
+    
+    fetchGoals();
+  }, []);
+
+  const addGoal = async (goal) => {
     const { reminderFrequency = 1, reminderUnit = "days" } = goal;
     const newGoal = {
       ...goal,
-      id: Date.now(),
       completed: false,
       reminderFrequency,
       reminderUnit,
       nextReminder: calculateNextReminder(reminderFrequency, reminderUnit),
     };
 
-    setGoals((prevGoals) => [...prevGoals, newGoal]);
+    try {
+      const docRef = await addDoc(collection(db, "goals"), newGoal);
+      setGoals((prevGoals) => [...prevGoals, { ...newGoal, id: docRef.id }]);
+    } catch (error) {
+      console.error("Error adding goal:", error);
+    }
   };
 
-  const markComplete = (goalId) => {
-    setGoals((prevGoals) =>
-      prevGoals.map((goal) =>
-        goal.id === goalId ? { ...goal, completed: !goal.completed } : goal
-      )
-    );
+  const markComplete = async (goalId) => {
+    const goal = goals.find((g) => g.id === goalId);
+    if (!goal) return;
+
+    try {
+      const goalRef = doc(db, "goals", goalId);
+      await updateDoc(goalRef, { completed: !goal.completed });
+      setGoals((prevGoals) =>
+        prevGoals.map((goal) =>
+          goal.id === goalId ? { ...goal, completed: !goal.completed } : goal
+        )
+      );
+    } catch (error) {
+      console.error("Error updating goal completion status:", error);
+    }
   };
 
-  const deleteGoal = (goalId) => {
-    setGoals((prevGoals) => prevGoals.filter((goal) => goal.id !== goalId));
+  const deleteGoal = async (goalId) => {
+    try {
+      const goalRef = doc(db, "goals", goalId);
+      await deleteDoc(goalRef);
+      setGoals((prevGoals) => prevGoals.filter((goal) => goal.id !== goalId));
+    } catch (error) {
+      console.error("Error deleting goal:", error);
+    }
   };
 
   const filteredGoals = goals.filter((goal) => {
@@ -84,7 +105,6 @@ export const GoalsProvider = ({ children }) => {
     return true;
   });
 
- 
   useEffect(() => {
     console.log("Updated Goals:", goals);
   }, [goals]);

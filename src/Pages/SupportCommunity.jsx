@@ -4,6 +4,7 @@ Community Forum: Community forum homepage with categories, user posts, and comme
 </h1> */
 }
 import { useState, useEffect } from "react";
+import Footer from "../Components/Footer";
 
 const SupportCommunity = () => {
   const forums = [
@@ -335,6 +336,7 @@ const SupportCommunity = () => {
       </div>
     </div>
     </div>
+    <Footer/>
     </>
   );
 };

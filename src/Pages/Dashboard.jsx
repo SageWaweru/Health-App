@@ -6,6 +6,8 @@
 
 import { Link, Outlet } from 'react-router-dom'
 import GoalList from '../Components/GoalList'
+import Footer from '../Components/Footer.jsx'
+
 function Dashboard() {
   
   return (
@@ -24,6 +26,7 @@ function Dashboard() {
       <div>
         
       </div>
+<Footer/>
     </div>
   )
 }
