@@ -134,7 +134,7 @@ function App() {
               </ProtectedRoute>
             }
           />
-      
+          <Route path="/goals" element={<Goals />} />
         </Routes>
       </Router>
     </GoalsProvider>

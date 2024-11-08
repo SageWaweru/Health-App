@@ -1,27 +1,57 @@
-import { useContext } from "react"
-import GoalsContext from "../Context/GoalsContext"
-import FilterButtons from '../Components/FilterButtons'
+import { useContext,useState } from "react";
+import GoalsContext from "../Context/GoalsContext";
+import FilterButtons from '../Components/FilterButtons';
+import GoalForm from "./GoalForm";
 
 function GoalList() {
-    const{goals, markComplete,deleteGoal}= useContext(GoalsContext)
-    
+  const { goals, markComplete, deleteGoal } = useContext(GoalsContext);
+  const [goalIdToEdit, setGoalIdToEdit] = useState(null);
+
   return (
     <div>
-              <FilterButtons/>
-        {goals.map((goal)=>(
-            <div key={goal.id} className="bg-white mb-2 p-2 rounded flex flex-col">
-                           <h2 className="mb-2 flex align-left">{goal.date}</h2>
-                <div className="flex justify-between">
-                      <div className="flex p-2">
-                        <input type="checkbox" role="button" onClick={()=>markComplete(goal.id)} className="mr-2"/>
-                        <h3 className={goal.completed ? "line-through" : ""}>{goal.title}</h3>
-                      </div>
-                  <button onClick={() => deleteGoal(goal.id)} className="bg-cyan-800 text-orange-50 w-24 float-right">Delete</button>
-                </div>
+      <FilterButtons />
+      {goals.length > 0 ? (
+        goals.map((goal) => (
+          <div key={goal.id} className="bg-white mb-2 p-2 rounded flex flex-col">
+            <h2 className="mb-2 flex align-left">
+              {new Date(goal.date).toLocaleDateString() || goal.date}
+            </h2>
+            <div className="flex justify-between">
+              <div className="flex p-2">
+                <input
+                  type="checkbox"
+                  role="button"
+                  checked={goal.completed}
+                  onChange={() => markComplete(goal.id)}
+                  className="mr-2"
+                />
+                <h3 className={goal.completed ? "line-through" : ""}>{goal.title}</h3>
+              </div>
+              <div className="space-x-4 float-right">
+                <button
+                  onClick={() => deleteGoal(goal.id)}
+                  className="bg-cyan-800 text-orange-50 w-24 "
+                >
+                  Delete
+                </button>
+                <button
+                  onClick={() => setGoalIdToEdit(goal.id)}
+                  className="bg-orange-600 text-orange-50 w-24 "
+                >
+                  Edit
+                </button>
+              </div>
             </div>
-        ))}
+          </div>
+        ))
+      ) : (
+        <p className="text-gray-500">No goals to display.</p>
+      )}
+      {goalIdToEdit && (
+        <GoalForm goalIdToEdit={goalIdToEdit} setGoalIdToEdit={setGoalIdToEdit} />
+      )}
     </div>
-  )
+  );
 }
 
-export default GoalList
+export default GoalList;

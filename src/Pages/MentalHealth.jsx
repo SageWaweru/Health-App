@@ -8,6 +8,7 @@ Counselor Connection: Page to request a session or find a counselor.
 
 
 import { useState, useEffect, useRef } from "react";
+import Footer from "../Components/Footer";
 
 const moods = ["Happy 😊", "Sad 😢", "Anxious 😟", "Calm 😌"];
 
@@ -459,6 +460,7 @@ const showAllMoodEntries = () => {
 
       </div>
     </div> 
+    <Footer/>
     </div>
   );
 };
