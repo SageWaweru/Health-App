@@ -35,8 +35,8 @@ function Auth({onLogin}) {
   });
   return (
     <div>
-      <div className='content-center'>
-        <form action=""  onClick = {handleSubmit} className="flex flex-col shadow-lg w-[500px] rounded-lg bg-stone-50">
+      <div className='flex justify-center'>
+        <form action=""  onClick = {handleSubmit} className="flex flex-col shadow-lg w-[500px] rounded-lg bg-stone-50 self-center">
             <h1 className='align-center rounded-t-lg h-16 pt-4 font-semibold text-2xl text-orange-50 bg-cyan-800 w-[500px]'>User Registration Form</h1>
             <div className="flex flex-col p-4 text-left ">
               <label htmlFor="name"  className="mb-2 mt-4">Name</label>
