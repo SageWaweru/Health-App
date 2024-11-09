@@ -74,3 +74,19 @@ button:focus-visible {
 /* body {
   @apply bg-gray-200;
 } */
+
+.animate-border-spin {
+  border-image: linear-gradient(90deg, #c6d3f6, #9333ea, #10b981, #f59e0b, #c6ff0a);
+  border-image-slice: 1;
+  animation: spin-border 3s linear infinite;
+}
+
+@keyframes spin-border {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
