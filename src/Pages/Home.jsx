@@ -1,6 +1,10 @@
+
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { TypeAnimation } from "react-type-animation";
+
+import Footer from '../Components/Footer'
+
 
 function Home() {
   const navigate = useNavigate();
@@ -36,6 +40,7 @@ function Home() {
     },
   ];
   return (
+
     <div className="flex flex-col w-full items-center bg-cyan-900 min-h-screen">
       <div className="text-white font-bold text-2xl mt-10">
         <TypeAnimation
@@ -110,6 +115,11 @@ function Home() {
       </div>
 
      
+
+    <div>
+      <Footer/>
+
+    </div>
     </div>
   );
 }

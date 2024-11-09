@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import Footer from '../Components/Footer.jsx'
+
 import {
   Droplets,
   Dumbbell,
@@ -460,6 +462,7 @@ function Fitness() {
           </ResponsiveContainer>
         </div>
       </div>
+      <Footer/>
     </div>
   );
 }
