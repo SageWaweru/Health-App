@@ -177,7 +177,7 @@ function Fitness() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-8">
+    <div className="w-full mx-auto p-6 space-y-8">
       {/* Header Section with DateTime and Profile Selection*/}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
         <div>

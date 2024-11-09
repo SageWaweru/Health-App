@@ -1,10 +1,9 @@
-{
-  /* <h1>
-Community Forum: Community forum homepage with categories, user posts, and comments.
-</h1> */
-}
+
 import { useState, useEffect } from "react";
 import Footer from "../Components/Footer";
+import { fetchUserSupport } from "../Components/SupportManager";
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '../firebase-config';
 
 const SupportCommunity = () => {
   const forums = [
@@ -68,6 +67,27 @@ const SupportCommunity = () => {
   const [groupDescription, setGroupDescription] = useState("");
   const [userName, setUserName] = useState("");
 
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (currentUser) {
+        setUserName(currentUser.displayName || currentUser.email);
+        // Fetch user's journal entries when logged in
+        fetchUserSupport(currentUser.uid)
+          .then((groups) => {
+            setGroupName(groups);
+          })
+          .catch((error) => {
+            console.error("Error fetching support groups", error);
+          });
+      } else {
+        setUserName(null);
+      }
+    });
+
+   
+    return () => unsubscribe();
+  }, []);
+
   const handleCreateGroup = () => {
     setIsCreatingGroup(true);
   };
@@ -120,7 +140,7 @@ const SupportCommunity = () => {
   // Handle new post creation
   const handlePostSubmit = (e) => {
     e.preventDefault();
-    const newPostObj = { content: newPost, replies: [] };
+    const newPostObj = {userName:userName, content: newPost, replies: [] };
     const updatedPosts = [newPostObj, ...posts];
     setPosts(updatedPosts);
     savePostsToLocalStorage(updatedPosts);
@@ -131,7 +151,10 @@ const SupportCommunity = () => {
   const handleReplySubmit = (e, index) => {
     e.preventDefault();
     const updatedPosts = [...posts];
-    updatedPosts[index].replies.push(reply);
+    updatedPosts[index].replies.push({
+      content: reply,
+      userName: userName,  
+    });;
     setPosts(updatedPosts);
     savePostsToLocalStorage(updatedPosts);
     setReply("");
@@ -168,6 +191,7 @@ const SupportCommunity = () => {
               className="p-4 bg-white border rounded-lg shadow-sm hover:shadow-md transition-shadow"
             >
               <p className="text-gray-800 text-lg mb-2">{post.content}</p>
+              <p className="text-sm text-gray-500">Posted by: {post.userName}</p>
 
               {/* Reply Form */}
               {selectedPostIndex === index ? (
@@ -210,7 +234,9 @@ const SupportCommunity = () => {
                     key={replyIndex}
                     className="p-2 bg-gray-100 rounded-lg shadow-inner"
                   >
+                    <p className="text-sm text-gray-500">Replied by: {reply.userName}</p>
                     <p className="text-gray-700">{reply}</p>
+                    
                   </div>
                 ))}
               </div>
