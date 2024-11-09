@@ -43,7 +43,7 @@ const Profile = () => {
 
 
   return (
-    <div className="profile-page">
+    <div className="profile-page" style={{ width: "80vw", maxWidth: "80vw" }}>
       <h1 className="text-3xl text-center mb-10 font-semibold border-b-2 border-b-cyan-800">
         User Profile
       </h1>
@@ -55,7 +55,7 @@ const Profile = () => {
 
           {/* Display Journal Entries */}
           <div>
-            <h4 className="text-xl text-center font-semibold mb-4">My Journal Entries</h4>
+            <h4 className="text-xl text-center text-cyan-700 font-semibold mb-4">My Journal Entries</h4>
             {journalHistory.length > 0 ? (
               journalHistory.map((entry, index) => (
                 <div key={index} className="mb-4 p-4 bg-white shadow-md rounded-md">
@@ -85,7 +85,7 @@ const Profile = () => {
         <div>
            {/* Display Mood Entries */}
           <div>
-            <h4 className="text-xl text-center font-semibold mb-4">My Mood Entries</h4>
+            <h4 className="text-xl text-center text-cyan-700 mt-10 font-semibold mb-4">My Mood Entries</h4>
             {moodHistory.length > 0 ? (
               moodHistory.map((entry, index) => (
                 <div key={index} className="mb-4 p-4 bg-white shadow-md rounded-md">
