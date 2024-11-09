@@ -14,6 +14,9 @@ import SupportCommunity from './Pages/SupportCommunity';
 import Fitness from './Pages/Fitness.jsx'
 import ProtectedRoute from './Components/ProtectedRoute.jsx';
 import Profile from './Pages/Profile.jsx';
+import { LogInIcon } from 'lucide-react';
+import { LogOutIcon } from 'lucide-react';
+import { UserRoundPen } from 'lucide-react';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
