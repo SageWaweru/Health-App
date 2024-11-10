@@ -1,3 +1,14 @@
+import { db } from "../Components/Firebase";
+import {
+  collection,
+  addDoc,
+  getDocs,
+  doc,
+  updateDoc,
+  query,
+  orderBy,
+  limit,
+} from "firebase/firestore";
 import { useState, useEffect } from "react";
 import {
   Droplets,
@@ -19,78 +30,12 @@ import {
   YAxis,
   BarChart,
   Bar,
+  ReferenceLine,
 } from "recharts";
 import CustomAlert from "../Components/CustomAlert";
 import FitnessFeedback from "../Components/FitnessFeedback";
 
-const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-
-// Sample data for the charts
-const weeklyData = [
-  {
-    day: "Mon",
-    water: 8,
-    sleep: 7,
-    totalExercise: 45,
-    cardio: 20,
-    strength: 15,
-    flexibility: 10,
-  },
-  {
-    day: "Tue",
-    water: 6,
-    sleep: 8,
-    totalExercise: 30,
-    cardio: 15,
-    strength: 15,
-    flexibility: 0,
-  },
-  {
-    day: "Wed",
-    water: 7,
-    sleep: 6,
-    totalExercise: 60,
-    cardio: 30,
-    strength: 20,
-    flexibility: 10,
-  },
-  {
-    day: "Thu",
-    water: 9,
-    sleep: 8,
-    totalExercise: 40,
-    cardio: 20,
-    strength: 10,
-    flexibility: 10,
-  },
-  {
-    day: "Fri",
-    water: 8,
-    sleep: 7,
-    totalExercise: 30,
-    cardio: 15,
-    strength: 15,
-    flexibility: 0,
-  },
-  {
-    day: "Sat",
-    water: 5,
-    sleep: 9,
-    totalExercise: 0,
-    cardio: 0,
-    strength: 0,
-    flexibility: 0,
-  },
-  {
-    day: "Sun",
-    water: 7,
-    sleep: 8,
-    totalExercise: 45,
-    cardio: 25,
-    strength: 10,
-    flexibility: 10,
-  },
-];
+const weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 function Fitness() {
   // Display Current Day
@@ -107,10 +52,11 @@ function Fitness() {
     sports: 0,
   });
 
-  // Data states
-  const [mockData, setMockData] = useState(weeklyData);
-  const [mockMonthlyData, setMockMonthlyData] = useState([]);
-  const [selectedDay, setSelectedDay] = useState("");
+  const [weeklyData, setWeeklyData] = useState([]);
+
+  // Editing States
+  const [isEditing, setIsEditing] = useState(false);
+  const [latestDocId, setLatestDocId] = useState(null);
 
   // Update current date/time
   useEffect(() => {
@@ -138,41 +84,115 @@ function Fitness() {
     setAlerts((curr) => curr.filter((alert) => alert.id !== alertId));
   };
 
-  // Handle Save action
-  function handleSave() {
-    if (!selectedDay) return;
+  // Assign Day of the week
+  const getDayOfWeek = () => {
+    const today = new Date();
+    const dayIndex = today.getDay(); // Get day index (0 = Sunday, 6 = Saturday)
+    return weekDays[dayIndex === 0 ? 6 : dayIndex - 1]; // Adjust if Sunday (0) to Sunday=6
+  };
 
-    const newEntry = {
-      day: selectedDay,
-      water: waterIntake,
-      sleep: sleepHours,
-      exercise: exercises,
+  // Fetch Weekly Data
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, "fitness"));
+        const formattedData = weekDays.map((day) => {
+          const dayData = querySnapshot.docs
+            .map((doc) => doc.data())
+            .find((data) => data.dayOfWeek === day);
+
+          return {
+            dayOfWeek: day,
+            waterIntake: dayData ? dayData.waterIntake : 0,
+            sleepHours: dayData ? dayData.sleepHours : 0,
+            cardioTime: dayData ? dayData.cardioTime || 0 : 0,
+            strengthTrainingTime: dayData
+              ? dayData.strengthTrainingTime || 0
+              : 0,
+            yogaTime: dayData ? dayData.yogaTime || 0 : 0,
+            sportsTime: dayData ? dayData.sportsTime || 0 : 0,
+            // Calculate total exercise time
+            totalExercise: dayData
+              ? (dayData.cardioTime || 0) +
+                (dayData.strengthTrainingTime || 0) +
+                (dayData.yogaTime || 0) +
+                (dayData.sportsTime || 0)
+              : 0,
+          };
+        });
+
+        setWeeklyData(formattedData);
+        console.log(formattedData);
+      } catch (error) {
+        console.error(error);
+      }
     };
+    fetchData();
+  }, []);
 
-    //   Add to mockData or create a new array if it exceeds 7
-    if (mockData.length < 7) {
-      setMockData((prev) => [...prev, newEntry]);
-    } else {
-      // Start a new array if the previous one exceeds 7
-      setMockData([newEntry]);
-    }
+  // Fetch Latest Document
+  useEffect(() => {
+    const fetchLatestDoc = async () => {
+      const q = query(
+        collection(db, "fitness"),
+        orderBy("createdAt", "desc"),
+        limit(1)
+      );
+      const querySnapshot = await getDocs(q);
+      if (!querySnapshot.empty) {
+        const doc = querySnapshot.docs[0];
+        const data = doc.data();
+        setLatestDocId(doc.id);
+        setWaterIntake(data.waterIntake || 0);
+        setSleepHours(data.sleepHours || 8);
+        setExercises({
+          cardio: data.cardioTime || 0,
+          strength: data.strengthTrainingTime || 0,
+          flexibility: data.yogaTime || 0,
+          sports: data.sportsTime || 0,
+        });
+      }
+    };
+    fetchLatestDoc();
+  }, []);
 
-    //   Add to mockMonthlyData if it has less than 4 items
-    if (mockMonthlyData.length < 4) {
-      setMockMonthlyData((prev) => [...prev, newEntry]);
+  const handleEdit = () => setIsEditing(true);
+
+  // store our db collection in a ref
+  // const fitnessDataRef = collection(db, "fitness");
+
+  // Function to save data to database
+  const handleSave = async () => {
+    const currentDay = getDayOfWeek();
+    try {
+      if (isEditing && latestDocId) {
+        const docRef = doc(db, "fitness", latestDocId);
+        await updateDoc(docRef, {
+          waterIntake,
+          sleepHours,
+          cardioTime: exercises.cardio,
+          strengthTrainingTime: exercises.strength,
+          yogaTime: exercises.flexibility,
+          sportsTime: exercises.sports,
+          dayOfWeek: currentDay,
+        });
+        setIsEditing(false);
+      } else {
+        await addDoc(collection(db, "fitness"), {
+          waterIntake,
+          sleepHours,
+          cardioTime: exercises.cardio,
+          strengthTrainingTime: exercises.strength,
+          yogaTime: exercises.flexibility,
+          sportsTime: exercises.sports,
+          createdAt: new Date(), // Timestamp for sorting
+          dayOfWeek: currentDay,
+        });
+      }
+    } catch (error) {
+      console.error("Error saving document: ", error);
     }
-    console.log(newEntry);
-    //   Restore default Values
-    setWaterIntake(0);
-    setSleepHours(8);
-    setExercises({
-      cardio: 0,
-      strength: 0,
-      flexibility: 0,
-      sports: 0,
-    });
-    setSelectedDay("");
-  }
+  };
 
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-8">
@@ -236,18 +256,31 @@ function Fitness() {
           <div className="mt-2 text-sm text-gray-600">Goal: 8 glasses</div>
           <div className="h-48 mt-4">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={weeklyData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="day" />
-                <YAxis />
-                <Tooltip />
-                <Line
-                  type="monotone"
-                  dataKey="water"
-                  stroke="#5EA4BF"
-                  name="Water (glasses)"
+              <BarChart data={weeklyData}>
+                <CartesianGrid strokeDasharray="2 2" />
+                <XAxis dataKey="dayOfWeek" />
+                <YAxis
+                  label={{
+                    value: "Water Intake (glasses)",
+                    angle: -90,
+                    position: "insideLeft",
+                  }}
                 />
-              </LineChart>
+                <Tooltip />
+                <Bar
+                  dataKey="waterIntake"
+                  fill="#5EA4BF"
+                  name="Water (glasses)"
+                  radius={[4, 4, 0, 0]} // Rounded top corners
+                />
+                {/* Add target line for 8 glasses */}
+                <ReferenceLine
+                  y={8}
+                  stroke="#2C5282"
+                  strokeDasharray="3 3"
+                  label="Goal"
+                />
+              </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
@@ -270,18 +303,32 @@ function Fitness() {
           <div className="mt-2 text-center text-black">{sleepHours} hours</div>
           <div className="h-48 mt-4">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={weeklyData}>
+              <BarChart data={weeklyData}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="day" />
-                <YAxis />
-                <Tooltip />
-                <Line
-                  type="monotone"
-                  dataKey="sleep"
-                  stroke="#D88624"
-                  name="Sleep (hours)"
+                <XAxis dataKey="dayOfWeek" />
+                <YAxis
+                  label={{
+                    value: "Sleep Hours",
+                    angle: -90,
+                    position: "insideLeft",
+                  }}
                 />
-              </LineChart>
+                <Tooltip />
+                <Bar
+                  type="monotone"
+                  dataKey="sleepHours"
+                  fill="#D88624"
+                  name="Sleep (hours)"
+                  radius={[4, 4, 0, 0]} // Rounded top corners
+                />
+                {/* Add target line for recommended 8 hours of sleep */}
+                <ReferenceLine
+                  y={8}
+                  stroke="#C05621"
+                  strokeDasharray="3 3"
+                  label="Recommended"
+                />
+              </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
@@ -290,7 +337,7 @@ function Fitness() {
         <div className="p-6 bg-emerald-50 rounded-xl shadow-sm">
           <div className="flex items-center gap-2 mb-4">
             <Dumbbell className="text-emerald-800" />
-            <h2 className="text-lg font-semibold">Exercise</h2>
+            <h2 className="text-lg font-semibold text-black">Exercise</h2>
           </div>
 
           {/* Exercise Type Inputs */}
@@ -360,27 +407,39 @@ function Fitness() {
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={weeklyData}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="day" />
-              <YAxis />
+              <XAxis dataKey="dayOfWeek" />
+              <YAxis
+                label={{
+                  value: "Exercise (minutes)",
+                  angle: -90,
+                  position: "insideLeft",
+                }}
+              />
               <Tooltip />
               <Legend />
               <Bar
-                dataKey="cardio"
-                stackId="exercise"
+                dataKey="cardioTime"
+                stackId="a"
                 fill="#22C55E"
                 name="Cardio"
               />
               <Bar
-                dataKey="strength"
-                stackId="exercise"
+                dataKey="strengthTrainingTime"
+                stackId="a"
                 fill="#10B981"
                 name="Strength"
               />
               <Bar
-                dataKey="flexibility"
-                stackId="exercise"
+                dataKey="yogaTime"
+                stackId="a"
                 fill="#059669"
                 name="Flexibility"
+              />
+              <Bar
+                dataKey="sportsTime"
+                stackId="a"
+                fill="#047857"
+                name="Sports"
               />
             </BarChart>
           </ResponsiveContainer>
@@ -388,32 +447,21 @@ function Fitness() {
       </div>
 
       {/* Save and Edit */}
-      <div className="flex items-center gap-4 justify-between">
-        <div className="flex items-center gap-4 justify-start">
-          <select
-            value={selectedDay}
-            onChange={(e) => setSelectedDay(e.target.value)}
-            className="p-2 border rounded-lg bg-white text-black"
-          >
-            <option value="" disabled>
-              Choose a day
-            </option>
-            {daysOfWeek.map((day) => (
-              <option key={day} value={day}>
-                {day}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="flex items-center gap-4 justify-end">
+      <div className="flex items-center gap-4 justify-end">
+        <div className="flex items-center gap-4 justify-between">
           <button
             className="w-[100px] bg-cyan-600 flex items-center justify-between py-2 px-3 focus:outline-none transform transition-transform duration-200 hover:scale-105"
             onClick={handleSave}
           >
-            <span className="text-white mr-2">Save</span>
+            <span className="text-white mr-2">
+              {isEditing ? "Update" : "Save"}
+            </span>
             <Save />
           </button>
-          <button className="w-[100px] bg-emerald-600 flex items-center justify-between py-2 px-3 focus:outline-none transform transition-transform duration-200 hover:scale-105">
+          <button
+            className="w-[100px] bg-emerald-600 flex items-center justify-between py-2 px-3 focus:outline-none transform transition-transform duration-200 hover:scale-105"
+            onClick={handleEdit}
+          >
             <span className="text-white mr-2">Edit</span>
             <Pencil />
           </button>
@@ -434,26 +482,26 @@ function Fitness() {
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={weeklyData}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="day" />
+              <XAxis dataKey="dayOfWeek" />
               <YAxis />
               <Tooltip />
               <Legend />
               <Line
                 type="monotone"
-                dataKey="water"
+                dataKey="waterIntake"
                 stroke="#5EA4BF"
                 name="Water (glasses)"
               />
               <Line
                 type="monotone"
-                dataKey="sleep"
+                dataKey="sleepHours"
                 stroke="#D88624"
                 name="Sleep (hours)"
               />
               <Line
                 type="monotone"
                 dataKey="totalExercise"
-                stroke="#3A7A6B"
+                stroke="#22C55E"
                 name="Total Exercise (min)"
               />
             </LineChart>
