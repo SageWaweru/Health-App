@@ -1,15 +1,15 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import PropTypes from "prop-types";
 // import { signInWithEmailAndPassword,createUserWithEmailAndPassword,signInWithPopup,GoogleAuthProvider,sendEmailVerification } from "firebase/auth"
 import {auth} from '../firebase-config'
 import { useNavigate } from "react-router-dom";
-import { createUserWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
+import { createUserWithEmailAndPassword, onAuthStateChanged, updateProfile } from "firebase/auth";
 
 function Auth({onLogin}) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword ] = useState('');
-  const [user, setUser] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -17,7 +17,11 @@ function Auth({onLogin}) {
     console.log('Form submitted',{email, password})
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      setUser(userCredential.user);
+      const user = userCredential.user;
+      await updateProfile(user, {
+    displayName: name,
+  });
+
       onLogin()
       navigate('/dashboard')
       alert("User registered:", userCredential.user);
@@ -28,11 +32,23 @@ function Auth({onLogin}) {
    
   };
 
-  onAuthStateChanged(auth, (currentUser) => {
-    if (currentUser) {
-      setUser(currentUser);
-    }
-  });
+ 
+  useEffect(() => {
+    // Check the authentication state when the component mounts
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setCurrentUser(user);
+        setName(user.displayName || '');
+        navigate('/dashboard');
+      } else {
+        setCurrentUser(null);
+        setName('')
+      }
+    });
+
+    // Clean up the subscription
+    return () => unsubscribe();
+  }, [navigate]);
   return (
     <div>
       <div className='flex justify-center'>
@@ -53,10 +69,16 @@ function Auth({onLogin}) {
             
         </form>
       </div>
+       {/* Display current user's name if logged in */}
+       {currentUser && currentUser.displayName && (
+        <div className="text-center mt-4">
+          <h2>Welcome, {currentUser.displayName}!</h2>
+        </div>
+      )}
     </div>
   )
 }
-Auth.proptypes-{
+Auth.propTypes = {
   onLogin: PropTypes.func.isRequired,
 };
 
