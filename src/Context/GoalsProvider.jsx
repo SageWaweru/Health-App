@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import GoalsContext from "./GoalsContext";
 import PropTypes from "prop-types";
-import { db } from "../firebase-config";
-import { collection, addDoc, getDocs, updateDoc, doc, deleteDoc } from 'firebase/firestore';
+import { db, auth } from "../firebase-config";
+import { collection, addDoc, getDocs, updateDoc, doc, deleteDoc, query, where } from 'firebase/firestore';
 
 const calculateNextReminder = (frequency, unit) => {
   const nextReminder = new Date();
@@ -44,16 +44,24 @@ export const GoalsProvider = ({ children }) => {
 
   useEffect(() => {
     const fetchGoals = async () => {
+      const currentUser = auth.currentUser;
+      if (!currentUser) return; 
+
       const goalsCollection = collection(db, "goals");
-      const goalsSnapshot = await getDocs(goalsCollection);
+      const goalsQuery = query(goalsCollection, where("userId", "==", currentUser.uid)); // Filter goals by user UID
+      const goalsSnapshot = await getDocs(goalsQuery);
       const goalsList = goalsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       setGoals(goalsList);
     };
-    
+
     fetchGoals();
   }, []);
 
+  // Add a new goal
   const addGoal = async (goal) => {
+    const currentUser = auth.currentUser;
+    if (!currentUser) return; // Ensure user is authenticated before adding a goal
+
     const { reminderFrequency = 1, reminderUnit = "days" } = goal;
     const newGoal = {
       ...goal,
@@ -61,6 +69,7 @@ export const GoalsProvider = ({ children }) => {
       reminderFrequency,
       reminderUnit,
       nextReminder: calculateNextReminder(reminderFrequency, reminderUnit),
+      userId: currentUser.uid, // Add userId to the goal data
     };
 
     try {
@@ -105,12 +114,8 @@ export const GoalsProvider = ({ children }) => {
     return true;
   });
 
-  useEffect(() => {
-    console.log("Updated Goals:", goals);
-  }, [goals]);
-
   return (
-    <GoalsContext.Provider value={{ goals: filteredGoals, addGoal, markComplete, deleteGoal, setFilter, setGoals }}>
+    <GoalsContext.Provider value={{ goals: filteredGoals, addGoal, markComplete, deleteGoal, setFilter }}>
       {children}
     </GoalsContext.Provider>
   );

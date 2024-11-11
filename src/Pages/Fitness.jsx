@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import Footer from '../Components/Footer.jsx'
+import { useTheme } from "../Context/ThemeContext"; 
 
 import {
   Droplets,
@@ -8,7 +9,6 @@ import {
   Pencil,
   Save,
   Clock,
-  Bell,
 } from "lucide-react";
 import {
   CartesianGrid,
@@ -24,6 +24,7 @@ import {
 } from "recharts";
 import CustomAlert from "../Components/CustomAlert";
 import FitnessFeedback from "../Components/FitnessFeedback";
+
 
 const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
@@ -95,6 +96,7 @@ const weeklyData = [
 ];
 
 function Fitness() {
+  const { theme } = useTheme();
   // Display Current Day
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
   // Input Cards State
@@ -177,12 +179,12 @@ function Fitness() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-8">
+    <div className={`max-w-4xl mx-auto p-6 space-y-8 ${theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-white text-black'}`}>
       {/* Header Section with DateTime and Profile Selection*/}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
         <div>
           <h1 className="text-2xl font-bold">Daily Health Tracker</h1>
-          <div className="flex items-center gap-2 text-gray-600">
+          <div className="flex items-center gap-2 text-gray-400">
             <Clock size={16} />
             {currentDateTime.toLocaleDateString("en-US", {
               weekday: "long",
