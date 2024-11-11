@@ -1,17 +1,14 @@
 import Auth from './Pages/Auth'
 import { useState, useEffect } from 'react';
-import { onAuthStateChanged } from 'firebase/auth';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { auth } from './firebase-config.js';
 import { signOut } from 'firebase/auth';
 import Home from './Pages/Home.jsx';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom';
 import './App.css'
 import MentalHealth from './Pages/MentalHealth';
 import Dashboard from './Pages/Dashboard';
 import Goals from './Pages/Goals';
-import { UserRoundPen } from "lucide-react";
-import { LogOutIcon} from "lucide-react";
-import { LogInIcon} from "lucide-react";
 import { GoalsProvider } from './Context/GoalsProvider';
 import Reminder from './Components/Reminder';
 import SupportCommunity from './Pages/SupportCommunity';
@@ -24,11 +21,15 @@ import { ThemeProvider } from './Context/ThemeContext.jsx';
 import { useTheme } from './Context/ThemeContext.jsx';
 import Blog from './Pages/Blog.jsx';
 import Register from './Pages/Register.jsx';
+import { LogInIcon } from 'lucide-react';
+import { LogOutIcon } from 'lucide-react';
+import { UserRoundPen } from 'lucide-react';
+
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const { theme } = useTheme();
   const [user, setUser] = useState(null);
+
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -40,21 +41,36 @@ function App() {
         setUser(null);
       }
     });
-    return () => unsubscribe(); // Cleanup on component unmount
+    return () => unsubscribe(); 
   }, []);
 
   const handleLogin = () => {
     console.log('user logged in')
     setIsAuthenticated(true); 
   };
-  console.log('isAuthenticated:', isAuthenticated);
+ 
+  const AppWithRouter = () => {
+    const navigate = useNavigate();
 
   const handleLogout = async () => {
+
     if (!auth.currentUser) {
       console.log("No user is currently logged in.");
       alert("No user is logged in.");
       return;
     }
+
+    try {
+      await signOut(auth); 
+      setIsAuthenticated(false);
+      setUser(null)
+      navigate('/'); 
+    } catch (error) {
+      console.error('Error logging out:', error.message);
+    }
+  };
+   
+
   
     try {
       await signOut(auth);
@@ -171,6 +187,7 @@ function App() {
               path="/goals"
               element={
                
+
                  <Goals/>
 
              
@@ -188,8 +205,15 @@ function App() {
   </div>
 
 
-  );
 
-}
+  );
+};
+
+return (
+  <Router>
+    <AppWithRouter />
+  </Router>
+);
+};
 
 export default App;

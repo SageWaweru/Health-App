@@ -6,6 +6,7 @@ import { auth } from '../firebase-config';
 import { useTheme } from "../Context/ThemeContext"; // Import theme context
 import { div } from "framer-motion/client";
 
+
 const SupportCommunity = () => {
   const { theme, toggleTheme } = useTheme(); // Access theme context
 
@@ -80,6 +81,9 @@ const SupportCommunity = () => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
         setUserName(currentUser.displayName || currentUser.email);
+
+        // Fetch user's journal entries when logged in
+
         fetchUserSupport(currentUser.uid)
           .then((groups) => {
             setGroupName(groups);
@@ -91,10 +95,12 @@ const SupportCommunity = () => {
         setUserName(null);
       }
     });
+
     return () => unsubscribe();
   }, []);
 
   const handleCreateGroup = () => setIsCreatingGroup(true);
+
 
   const handleSubmitGroup = (e) => {
     e.preventDefault();
@@ -133,6 +139,7 @@ const SupportCommunity = () => {
 
   const handlePostSubmit = (e) => {
     e.preventDefault();
+
     const newPostObj = { userName: userName, content: newPost, replies: [] };
     const updatedPosts = [newPostObj, ...posts];
     setPosts(updatedPosts);
@@ -143,20 +150,22 @@ const SupportCommunity = () => {
   const handleReplySubmit = (e, index) => {
     e.preventDefault();
     const updatedPosts = [...posts];
+
     updatedPosts[index].replies.push({ content: reply, userName: userName });
+
     setPosts(updatedPosts);
     savePostsToLocalStorage(updatedPosts);
     setReply("");
   };
 
   return (
+
       <div className={`${theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-stone-50 text-black'}`}>
         <h2 className="text-4xl font-semibold mb-4 border-b-2 border-b-cyan-800">SUPPORT & COMMUNITY</h2>
         <button onClick={toggleTheme} className="mt-4 p-2 bg-blue-500 rounded">
           Toggle Theme
         </button>
-    
-        <section>
+            <section>
           <h2 className="text-3xl mt-8 font-semibold mb-4">Join Existing Forums</h2>
           <p className="mb-4 font-bold text-base">
             Find support and join discussions on mental health, fitness, and wellness topics through the following forums:

@@ -2,13 +2,17 @@ import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { auth } from '../firebase-config';
 import { useNavigate } from "react-router-dom";
+
 import { signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
+import { createUserWithEmailAndPassword, onAuthStateChanged, updateProfile } from "firebase/auth";
 
 function Auth({ onLogin }) {
   const [email, setEmail] = useState('');
+
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [user, setUser] = useState(null);
+
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -16,17 +20,27 @@ function Auth({ onLogin }) {
     setError(''); // Reset error message before login attempt
 
     try {
+
       // Attempt to login
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       setUser(userCredential.user);
       onLogin();
       navigate('/dashboard'); // Redirect to dashboard on successful login
       alert("Welcome back, " + userCredential.user.email);
+      await updateProfile(user, {
+    displayName: name,
+  });
+
+      onLogin()
+      navigate('/dashboard')
+      alert("User registered:", userCredential.user);
+
     } catch (error) {
       console.error('Error logging in:', error.message);
       setError("Login failed: " + error.message); // Display error to the user
     }
   };
+
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -69,9 +83,16 @@ function Auth({ onLogin }) {
           </div>
         </form>
       </div>
+       {/* Display current user's name if logged in */}
+       {currentUser && currentUser.displayName && (
+        <div className="text-center mt-4">
+          <h2>Welcome, {currentUser.displayName}!</h2>
+        </div>
+      )}
     </div>
   );
 }
+
 
 Auth.propTypes = {
   onLogin: PropTypes.func.isRequired,
