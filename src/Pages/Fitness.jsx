@@ -1,4 +1,4 @@
-import { db } from "../Components/Firebase";
+import { db } from "../firebase";
 import {
   collection,
   addDoc,
