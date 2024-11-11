@@ -1,7 +1,9 @@
+import { useTheme } from "../Context/ThemeContext"
 
 function Footer() {
+  const {theme}=useTheme();
   return (
-    <div className="mt-6">Mental Health@2024 All Rights Reserved</div>
+    <div className={`mt-6 ${theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-white text-black'}`}>AfyaPlus @2024 All Rights Reserved</div>
   )
 }
 
