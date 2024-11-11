@@ -8,7 +8,7 @@ import { div } from "framer-motion/client";
 
 
 const SupportCommunity = () => {
-  const { theme, toggleTheme } = useTheme(); // Access theme context
+  const { theme } = useTheme(); // Access theme context
 
   const forums = [
     {
@@ -76,6 +76,8 @@ const SupportCommunity = () => {
   const [groupName, setGroupName] = useState("");
   const [groupDescription, setGroupDescription] = useState("");
   const [userName, setUserName] = useState("");
+  const [isEditingGroup, setIsEditingGroup] = useState(false);
+  const [editGroupId, setEditGroupId] = useState(null);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -99,18 +101,74 @@ const SupportCommunity = () => {
     return () => unsubscribe();
   }, []);
 
-  const handleCreateGroup = () => setIsCreatingGroup(true);
+  // const handleCreateGroup = () => setIsCreatingGroup(true);
 
+
+  // const handleSubmitGroup = (e) => {
+  //   e.preventDefault();
+  //   if (groupName && groupDescription) {
+  //     const newGroup = { id: Date.now(), name: groupName, description: groupDescription, members: [] };
+  //     setGroups([...groups, newGroup]);
+  //     setGroupName("");
+  //     setGroupDescription("");
+  //     setIsCreatingGroup(false);
+  //   }
+  // };
+  const handleCreateGroup = () => {
+    setIsCreatingGroup(true);
+    setIsEditingGroup(false);
+    setGroupName("");
+    setGroupDescription("");
+  };
+
+  const handleEditGroup = (group) => {
+    setIsEditingGroup(true);
+    setEditGroupId(group.id);
+    setGroupName(group.name);
+    setGroupDescription(group.description);
+    setIsCreatingGroup(true); // Display the form for editing
+  };
 
   const handleSubmitGroup = (e) => {
     e.preventDefault();
     if (groupName && groupDescription) {
-      const newGroup = { id: Date.now(), name: groupName, description: groupDescription, members: [] };
-      setGroups([...groups, newGroup]);
+      if (isEditingGroup) {
+        // Update existing group
+        const updatedGroups = groups.map((group) =>
+          group.id === editGroupId
+            ? { ...group, name: groupName, description: groupDescription }
+            : group
+        );
+        setGroups(updatedGroups);
+        setIsEditingGroup(false);
+        setEditGroupId(null);
+      } else {
+        // Create new group
+        const newGroup = {
+          id: Date.now(),
+          name: groupName,
+          description: groupDescription,
+          members: [],
+        };
+        setGroups([...groups, newGroup]);
+      }
       setGroupName("");
       setGroupDescription("");
       setIsCreatingGroup(false);
     }
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditingGroup(false);
+    setEditGroupId(null);
+    setIsCreatingGroup(false); // Hide the form when canceling
+    setGroupName("");
+    setGroupDescription("");
+  };
+
+  const handleCancelGroup = (groupId) => {
+    const updatedGroups = groups.filter((group) => group.id !== groupId);
+    setGroups(updatedGroups);
   };
 
   const handleJoinGroup = (groupId) => {
@@ -118,15 +176,31 @@ const SupportCommunity = () => {
       alert("Please enter your name to join the group.");
       return;
     }
-    const updatedGroups = groups.map((group) => {
-      if (group.id === groupId) {
-        return { ...group, members: [...group.members, userName] };
-      }
-      return group;
-    });
+    const updatedGroups = groups.map((group) =>
+      group.id === groupId
+        ? { ...group, members: [...group.members, userName] }
+        : group
+    );
     setGroups(updatedGroups);
     setUserName("");
   };
+
+
+
+  // const handleJoinGroup = (groupId) => {
+  //   if (userName.trim() === "") {
+  //     alert("Please enter your name to join the group.");
+  //     return;
+  //   }
+  //   const updatedGroups = groups.map((group) => {
+  //     if (group.id === groupId) {
+  //       return { ...group, members: [...group.members, userName] };
+  //     }
+  //     return group;
+  //   });
+  //   setGroups(updatedGroups);
+  //   setUserName("");
+  // };
 
   useEffect(() => {
     const savedPosts = JSON.parse(localStorage.getItem("forumPosts")) || [];
@@ -162,9 +236,6 @@ const SupportCommunity = () => {
 
       <div className={`${theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-stone-50 text-black'}`}>
         <h2 className="text-4xl font-semibold mb-4 border-b-2 border-b-cyan-800">SUPPORT & COMMUNITY</h2>
-        <button onClick={toggleTheme} className="mt-4 p-2 bg-blue-500 rounded">
-          Toggle Theme
-        </button>
             <section>
           <h2 className="text-3xl mt-8 font-semibold mb-4">Join Existing Forums</h2>
           <p className="mb-4 font-bold text-base">
@@ -278,9 +349,24 @@ const SupportCommunity = () => {
                 className="mx-auto block w-3/4 p-2 mb-2 rounded-lg border-2 border-cyan-800 text-gray-600"
                 required
               ></textarea>
-              <button type="submit" className="py-2 px-4 bg-cyan-800 hover:bg-cyan-700 text-white rounded-lg">
+              {/* <button type="submit" className="py-2 px-4 bg-cyan-800 hover:bg-cyan-700 text-white rounded-lg">
                 Create Group
+              </button> */}
+               <button
+              type="submit"
+              className="py-2 px-4 bg-cyan-800 hover:bg-cyan-700 text-white rounded-lg"
+            >
+              {isEditingGroup ? "Save Changes" : "Create Group"}
+            </button>
+            {isEditingGroup && (
+              <button
+                type="button"
+                onClick={handleCancelEdit}
+                className="ml-2 py-2 px-4 w-36 bg-emerald-800 hover:bg-red-500 text-white rounded-lg"
+              >
+                Cancel
               </button>
+            )}
             </form>
           )}
     
@@ -293,6 +379,18 @@ const SupportCommunity = () => {
                   <button onClick={() => handleJoinGroup(group.id)} className="mt-2 py-1 px-3 bg-cyan-800 text-white rounded-lg hover:bg-cyan-600">
                     Join Group
                   </button>
+                  <button
+                onClick={() => handleEditGroup(group)}
+                className="mt-2 py-1 px-3 bg-orange-600 w-24 text-white rounded-lg hover:bg-orange-400 ml-2"
+              >
+                Edit
+              </button>
+              <button
+                onClick={() => handleCancelGroup(group.id)}
+                className="mt-2 py-1 px-3 w-24 bg-emerald-800 text-white rounded-lg hover:bg-red-600 ml-2"
+              >
+                Delete
+              </button>
     
                   <input
                     type="text"
@@ -320,11 +418,10 @@ const SupportCommunity = () => {
             )}
           </div>
         </div>
+        <Footer/>
       </div>
     );
     };
     
 
 export default SupportCommunity;
-
-

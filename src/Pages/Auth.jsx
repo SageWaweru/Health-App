@@ -4,7 +4,7 @@ import { auth } from '../firebase-config';
 import { useNavigate } from "react-router-dom";
 
 import { signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
-import { createUserWithEmailAndPassword, onAuthStateChanged, updateProfile } from "firebase/auth";
+import {  updateProfile } from "firebase/auth";
 
 function Auth({ onLogin }) {
   const [email, setEmail] = useState('');
@@ -76,7 +76,7 @@ function Auth({ onLogin }) {
             />
             {error && <p className="text-red-500 mt-2">{error}</p>}
             <br />
-            <p>Don't have an account? <span role="button" className="underline decoration-1 text-blue-300" onClick={() => navigate('/register')}>Register</span></p>
+            <p>Do not have an account? <span role="button" className="underline decoration-1 text-blue-300" onClick={() => navigate('/register')}>Register</span></p>
             <button className='bg-cyan-800 text-orange-50 hover:bg-cyan-700 hover:shadow-lg p-1 px-5 w-full my-5 h-10'>
               Login
             </button>
@@ -84,9 +84,9 @@ function Auth({ onLogin }) {
         </form>
       </div>
        {/* Display current user's name if logged in */}
-       {currentUser && currentUser.displayName && (
+       {user && user.displayName && (
         <div className="text-center mt-4">
-          <h2>Welcome, {currentUser.displayName}!</h2>
+          <h2>Welcome, {user.displayName}!</h2>
         </div>
       )}
     </div>

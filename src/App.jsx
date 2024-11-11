@@ -2,7 +2,6 @@ import Auth from './Pages/Auth'
 import { useState, useEffect } from 'react';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { auth } from './firebase-config.js';
-import { signOut } from 'firebase/auth';
 import Home from './Pages/Home.jsx';
 import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom';
 import './App.css'
@@ -29,6 +28,7 @@ import { UserRoundPen } from 'lucide-react';
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
+  const {theme}= useTheme();
 
 
   useEffect(() => {
@@ -63,24 +63,17 @@ function App() {
     try {
       await signOut(auth); 
       setIsAuthenticated(false);
+      alert("You have been logged out successfully.");
+
       setUser(null)
       navigate('/'); 
     } catch (error) {
       console.error('Error logging out:', error.message);
+      alert("Logout failed: " + error.message);
+
     }
   };
    
-
-  
-    try {
-      await signOut(auth);
-      setIsAuthenticated(false); // Update local state to reflect logout
-      alert("You have been logged out successfully.");
-    } catch (error) {
-      console.error("Logout failed:", error); // Log full error details
-      alert("Logout failed: " + error.message);
-    }
-  };
     
   return (
     <div className="flex flex-wrap flex-col">
@@ -88,7 +81,7 @@ function App() {
       <ProfileProvider>
       <GoalsProvider>
         <Reminder />
-        <Router>
+        {/* <Router> */}
           <nav className={`shadow-lg pb-3 mb-4 nav p-3 ${theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-white text-black'}`}>
           {!isAuthenticated ? (
              <div className='container mx-auto flex justify-between w-screen'>
@@ -108,6 +101,7 @@ function App() {
                   <Link to="/Fitness">Health Tracker</Link>
                   <Link to="/Community">Support & Community</Link>
                   <Link to="/blog">Blog</Link>
+      
                 </div>
                 <div className='flex space-x-4'>
                   <span role='button' className='flex font-semibold hover:blue-500 ml-3' onClick={handleLogout}><LogOutIcon/>Logout</span>
@@ -198,7 +192,7 @@ function App() {
             <Route path="/blog" element={<Blog />} />
             <Route path="/register" element={<Register />} />
           </Routes>
-        </Router>
+        {/* </Router> */}
       </GoalsProvider>
       </ProfileProvider>
     </ThemeProvider>

@@ -2,8 +2,6 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { TypeAnimation } from "react-type-animation";
 
-import Footer from '../Components/Footer'
-
 
 function Home() {
   const navigate = useNavigate();
@@ -132,7 +130,6 @@ function Home() {
      
 
     <div className="mb-7 text-white">
-      <Footer/>
 
     </div>
     </div>

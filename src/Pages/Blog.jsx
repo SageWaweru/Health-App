@@ -24,21 +24,18 @@ function Blog() {
         url: "https://www.verywellmind.com/the-importance-of-mental-health-for-wellbeing-5207938",
       },
       {
-        name: "15 benefits of drinking water",
-        description:
-          "Drinking water has numerous benefits. Water is crucial for many bodily functions, such as lubricating the joints, delivering oxygen throughout the body, preventing kidney damage, and more...",
+        name: "Anxiety",
+        description:"Anxiety is an emotion that causes increased alertness, tension, and physical signs, such as a rapid heart rate. Read on to learn more...",
         url: "https://www.medicalnewstoday.com/articles/290814",
       },
       {
-        name: "15 benefits of drinking water",
-        description:
-          "Drinking water has numerous benefits. Water is crucial for many bodily functions, such as lubricating the joints, delivering oxygen throughout the body, preventing kidney damage, and more...",
+        name: "Mental health",
+        description:"Mental health refers to cognitive, behavioral, and emotional well-being. We define mental health, explain different disorders, and assess potential...",
         url: "https://www.medicalnewstoday.com/articles/290814",
       },
       {
-        name: "15 benefits of drinking water",
-        description:
-          "Drinking water has numerous benefits. Water is crucial for many bodily functions, such as lubricating the joints, delivering oxygen throughout the body, preventing kidney damage, and more...",
+        name: "Why stress happens and how to manage it",
+        description:"Stress is a natural reaction to specific demands and events, but ongoing stress can affect a person’s health and wellbeing. Tips for managing stress include exercise, setting priorities, counseling, and more...",
         url: "https://www.medicalnewstoday.com/articles/290814",
       }, 
 ];
