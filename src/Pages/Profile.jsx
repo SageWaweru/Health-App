@@ -82,11 +82,11 @@ const Profile = () => {
 
       {user ? (
         <div>
-          <h3 className="text-3xl text-left mb-4 text-cyan-700">Welcome, {user.displayName || user.email}!</h3>
+          <h3 className={`text-xl text-left mb-4 ${theme=== 'dark' ? 'text-gray-500 ' :'text-black'}`}>Welcome, {user.displayName || user.email}!</h3>
 
           {/* Display Journal Entries */}
           <div>
-            <h4 className="text-xl text-center text-cyan-700 font-semibold mb-4">My Journal Entries</h4>
+            <h4 className={`text-2xl text-left  font-semibold mb-4 ${theme=== 'dark' ? 'text-white' :'text-black'}`}>My Journal Entries</h4>
             {journalHistory.length > 0 ? (
               journalHistory.map((entry, index) => (
                 <div key={index} className="mb-4 p-4 bg-white shadow-md rounded-md">
@@ -116,7 +116,7 @@ const Profile = () => {
         <div>
           {/* Display Mood Entries */}
           <div>
-            <h4 className="text-xl text-center text-cyan-700 mt-10 font-semibold mb-4">My Mood Entries</h4>
+            <h4 className={`text-2xl text-left  font-semibold mb-4 ${theme=== 'dark' ? 'text-white' :'text-black'}`}>My Mood Entries</h4>
             {moodHistory.length > 0 ? (
               moodHistory.map((entry, index) => (
                 <div key={index} className="mb-4 p-4 bg-white shadow-md rounded-md">
