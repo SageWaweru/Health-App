@@ -17,7 +17,7 @@ function Register() {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       await sendEmailVerification(userCredential.user);
-      alert('Registration successful! A verification email has been sent. Please verify your email before logging in.');
+      alert('Registration successful!.');
       navigate('/login');
     } catch (error) {
       setError(error.message);
