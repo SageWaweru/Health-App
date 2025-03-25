@@ -34,7 +34,6 @@ const [selectedMoodDay, setSelectedMoodDay] = useState("");
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
-        // Fetch user's journal entries when logged in
         fetchUserJournalEntries(currentUser.uid)
           .then((entries) => {
             setJournalHistory(entries);
@@ -56,7 +55,6 @@ const [selectedMoodDay, setSelectedMoodDay] = useState("");
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
-        // Fetch user's journal entries when logged in
         fetchUserMoodEntries(currentUser.uid)
           .then((entries) => {
             setMoodHistory(entries);
@@ -178,7 +176,6 @@ const [selectedMoodDay, setSelectedMoodDay] = useState("");
     const updatedSelectedEntry = { ...selectedEntry, files: updatedFiles };
     setSelectedEntry(updatedSelectedEntry);
   
-    // Update `journalHistory` to reflect the removal
     const updatedJournalHistory = journalHistory.map((entry) =>
       entry.date === selectedEntry.date ? updatedSelectedEntry : entry
     );
@@ -273,7 +270,7 @@ const showAllMoodEntries = () => {
 )}
 
       {/* Main Container */}
-  <div className="flex gap-10">
+  <div className="flex flex-col sm:flex-row gap-10">
 
       <div className={`font-sans flex-1 p-4  shadow-lg rounded-lg ${theme === 'dark' ? 'bg-gray-200 text-gray-600' : 'bg-white text-black'}`}>
         <h2 className="text-xl text-left mb-6 font-semibold ">

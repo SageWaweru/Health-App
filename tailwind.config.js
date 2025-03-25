@@ -8,13 +8,10 @@ export default {
   theme: {
     extend: {
       backgroundImage: {
-        'custom-image': "url('/src/images/oshm0t8a.png')",
+        'custom-image': "url('/images/oshm0t8a.png')",
       },
       width: {
         'custom-width': '90vw', 
-      },
-      colors: {
-        // Your custom colors or any other custom theme extensions
       },
     },
   },

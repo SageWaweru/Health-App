@@ -21,8 +21,8 @@ const predefinedAvatars = [
 ];
 
 const ProfileSetting = () => {
-    const { theme, toggleTheme } = useTheme(); 
-    const { setProfile } = useProfile();
+  const { theme, toggleTheme } = useTheme(); 
+  const {profile, setProfile } = useProfile();
   const [name, setName] = useState('');
   const [selectedAvatar, setSelectedAvatar] = useState('/avatars/avatar2.jpg');
   const [preferences, setPreferences] = useState({
@@ -46,26 +46,28 @@ const ProfileSetting = () => {
    
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => { 
     e.preventDefault();
     const user = auth.currentUser;
 
-    console.log("Submitting profile:", { name, selectedAvatar, preferences });
+    const updatedName = name.trim() !== "" ? name : profile.name; 
+
+    console.log("Submitting profile:", { name: updatedName, selectedAvatar, preferences });
 
     if (user) {
       try {
         await updateProfile(user, {
-          displayName: name,
+          displayName: updatedName,
           photoURL: selectedAvatar,
         });
 
         setProfile({
-          name,
+          name: updatedName, 
           avatar: selectedAvatar,
           preferences, 
         });
 
-        console.log("Profile updated:", { name, selectedAvatar, preferences });
+        console.log("Profile updated:", { name: updatedName, selectedAvatar, preferences });
         alert("Profile updated successfully!");
       } catch (error) {
         console.error("Error updating profile:", error);

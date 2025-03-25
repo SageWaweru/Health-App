@@ -12,28 +12,28 @@ function Home() {
 
   const cardData = [
     {
-      imgSrc: "src/images/MH.PNG",
+      imgSrc: "/images/MH.PNG",
       title: "Mental Health Resources",
       description:
         "Utilize a mood tracker and journaling tools to support your mental well-being.",
       link:'./auth'
     },
     {
-      imgSrc: "src/images/pexels-pixabay-262438.jpg",
+      imgSrc: "/images/pexels-pixabay-262438.jpg",
       title: "Goal Setting",
       description:
         "Set actionable goals, track your progress, and stay motivated on your journey to personal growth.",
       link:'./auth'
     },
     {
-      imgSrc: "src/images/pexels-john-tekeridis-21837-14843494.jpg",
+      imgSrc: "/images/pexels-john-tekeridis-21837-14843494.jpg",
       title: "Fitness Programs",
       description:
         "Discover fitness plans tailored to your goals and start your journey to a healthier lifestyle.",
       link:'./auth'
     },
     {
-      imgSrc: "src/images/pexels-anastasia-shuraeva-9501978.jpg",
+      imgSrc: "/images/pexels-anastasia-shuraeva-9501978.jpg",
       title: "Community Support",
       description:
         "Join a community of like-minded individuals to share and support one another.",

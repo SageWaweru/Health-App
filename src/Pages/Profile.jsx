@@ -14,13 +14,15 @@ const Profile = () => {
   const navigate = useNavigate();
   const { theme } = useTheme();
 
-  // Fetch user and journal entries when the component mounts
+  useEffect(() => {
+    console.log("Profile updated in Profile.jsx:", profile);
+  }, [profile]);
+  
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
 
-        // Fetch journal entries from localStorage (or Firebase)
         const storedJournalHistory = JSON.parse(localStorage.getItem("journalHistory")) || [];
         setJournalHistory(storedJournalHistory);
       } else {
@@ -45,11 +47,10 @@ const Profile = () => {
 
     return () => unsubscribe();
   }, []);
-
-  // Fallback logic for the profile avatar
-  const avatarUrl = profile.avatar && profile.avatar.startsWith('http')
-    ? profile.avatar 
-    : '/avatars/avatar2.jpg'; // Default avatar if profile avatar is not available
+  
+  const avatarUrl = profile.avatar && profile.avatar.startsWith('http') 
+  ? profile.avatar 
+  : profile.avatar || '/avatars/avatar2.jpg'; 
 
   return (
     <div className="profile-page" style={{ width: "80vw", maxWidth: "80vw" }}>
